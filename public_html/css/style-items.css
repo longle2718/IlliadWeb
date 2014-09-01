@@ -1,0 +1,112 @@
+.button.demo:hover {
+	color: inherit !important;
+}
+
+.button.download:hover {
+	border-color: #e7746f !important;
+	background: #e7746f !important;
+	color: #fff !important;
+}
+
+article.item {
+	color: #fff;
+	background: #676D79;
+}
+
+	article.item .button.demo {
+		border-color: #fff;
+		border-color: rgba(255,255,255,0.5);
+	}
+	
+		article.item .button.demo:hover {
+			background: rgba(255,255,255,0.1) !important;
+		}
+
+	article.item .button.download {
+		border-color: #fff;
+		background: #fff;
+		color: #676D79;
+	}
+
+article.alpha {}
+	article.alpha .button.download { color: #E3957E; }
+	article.alpha .button.download:hover { background: #2B2E37 !important; border-color: #2B2E37 !important; }
+
+article.directive {}
+	article.directive .button.download { color: #4EB981; }
+
+article.aerial {}
+	article.aerial .button.download { color: #368EB2; }
+
+article.twenty {}
+	article.twenty .button.download { color: #4fa79b; }
+
+article.big-picture {}
+	article.big-picture .button.download { color: #6C8488; }
+
+article.tessellate {}
+	article.tessellate .button.download { color: #875357; }
+
+article.overflow {}
+	article.overflow .button.download { color: #484C55; }
+
+article.prologue {}
+	article.prologue .button.download { color: #536066; }
+
+article.helios { color: #4C454D; }
+	article.helios .button.demo { border-color: #aca8ad; }
+		article.helios .button.demo:hover { background: rgba(0,0,0,0.05) !important; }
+	article.helios .button.download { border-color: #4C454D; background: #4C454D; color: #fff; }
+
+article.telephasic { color: #52575c; }
+	article.telephasic .button.demo { border-color: #c2c7cc; }
+		article.telephasic .button.demo:hover { background: rgba(0,0,0,0.05) !important; }
+	article.telephasic .button.download { border-color: #42474c; background: #42474c; color: #fff; }
+
+article.strongly-typed { color: #555; }
+	article.strongly-typed .button.demo { border-color: #bbb; }
+		article.strongly-typed .button.demo:hover { background: rgba(0,0,0,0.05) !important; }
+	article.strongly-typed .button.download { border-color: #555; background: #555; color: #fff; }
+
+article.parallelism {}
+	article.parallelism .button.download { color: #35353D; }
+
+article.escape-velocity {}
+	article.escape-velocity .button.download { color: #414753; }
+
+article.astral {}
+	article.astral .button.download { color: #3C3D42; }
+
+article.striped { color: #252D38; }
+	article.striped .button.demo { border-color: #959Da8; }
+		article.striped .button.demo:hover { background: rgba(0,0,0,0.05) !important; }
+	article.striped .button.download { border-color: #353D48; background: #353D48; color: #fff; }
+
+article.dopetrope {}
+	article.dopetrope .button.download { color: #352F31; }
+
+article.miniport {}
+	article.miniport .button.download { color: #2174AA; }
+
+article.txt { color: #545B61; }
+	article.txt .button.demo { border-color: #949ba1; }
+		article.txt .button.demo:hover { background: rgba(0,0,0,0.05) !important; }
+	article.txt .button.download { border-color: #545B61; background: #545B61; color: #fff; }
+
+article.verti { color: #444444; }
+	article.verti .button.demo { border-color: #aaa; }
+		article.verti .button.demo:hover { background: rgba(0,0,0,0.05) !important; }
+	article.verti .button.download { border-color: #444; background: #444; color: #fff; }
+
+article.zerofour {}
+	article.zerofour .button.download { color: #3385B4; }
+
+article.arcana {}
+	article.arcana .button.download { color: #1C4849; }
+
+article.halcyonic {}
+	article.halcyonic .button.download { color: #2B3034; }
+
+article.minimaxing {}
+	article.minimaxing .button.download { color: #007BA7; }
+
