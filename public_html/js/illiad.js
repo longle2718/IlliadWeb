@@ -23,84 +23,77 @@
  */
 
 var IllDownData = function(db, user, pwd, filename){
-    var queryString = $.param({'user':user, 'pwd': pwd, 'filename': filename});
-    $.ajax({
+    var queryString = $.param({'user':user, 'passwd': pwd, 'filename': filename});
+    var request = $.ajax({
         url: 'https://acoustic.ifp.uiuc.edu:8081/gridfs/'+db+'/data?'+queryString,
-        method:'GET', 
-        success:function(data,status){
-            console.log(status);
-            console.log(data[1]+data[2]+data[3]+data[4]);
-        },
-        error:function(){
-            alert('Error');
-        },
+        type:'GET',
         timeOut: 10000,
-        async: false
+        xhrFields: {
+            withCredentials: true
+        }
+    });
+    request.done(function(data,status){
+        console.log(status);
+        console.log(data[1]+data[2]+data[3]+data[4]);
     });
 };
 
 var IllDownEvent = function(db, user, pwd, filename){
     var ret;
-    var queryString = $.param({'dbname':db, 'colname':'event', 'user':user, 'pwd': pwd});
-    $.ajax({
+    var queryString = $.param({'dbname':db, 'colname':'event', 'user':user, 'passwd': pwd});
+    var  request = $.ajax({
         url: 'https://acoustic.ifp.uiuc.edu:8081/query?'+queryString,
         data: '{filename:"'+filename+'"}',
-        method:'POST', 
-        success:function(data, status){
-            console.log(status);
-            ret = JSON.parse(data);
-        },
+        type:'POST', 
         timeOut: 10000,
-        async: false
+        xhrFields: {
+            withCredentials: true
+        }
+    });
+    request.done(function(data,status){
+        console.log(status);
+        console.log(data);
+        //ret = JSON.parse(data);
+        ret = data;
     });
     return ret;
 };
 
 var IllTimeQuery = function (db, user, pwd, varargin){
     var ret;
-    
+    var  request;
     //var tZoneOffset = 5/24;
     
     if (Object.keys(varargin).length <= 1){
         var queryString = $.param({'dbname':db, 'colname': 'data.files', 'user': user, 'passwd': pwd});
-        $.ajax({
+        request = $.ajax({
             url: 'https://acoustic.ifp.uiuc.edu:8081/query?'+queryString,
             data: '{uploadDate:{$gte:{$date:"' + varargin.time1 + 'Z"}}}',
-            method:'POST', 
-            success:function(data, status){
-                console.log(status);
-                ret = JSON.parse(data);
-            },
-            timeOut: 10000,
-            async: false
+            type:'POST', 
+            timeOut: 10000
         });
     } else{
         if (varargin.hasOwnProperty('limit')){
             var queryString = $.param({'dbname':db, 'colname': 'data.files', 'user': user, 'passwd': pwd, 'limit':varargin.limit});
-            $.ajax({
+            request = $.ajax({
                 url: 'https://acoustic.ifp.uiuc.edu:8081/query?'+queryString,
                 data: '{uploadDate:{$gte:{$date:"' + varargin.time1 + 'Z"}}}',
-                method:'POST', 
-                success:function(data, status){
-                    console.log(status);
-                    ret = JSON.parse(data);
-                },
+                type:'POST', 
                 timeOut: 10000
             });
         } else if(varargin.hasOwnProperty('time2')) {
             var queryString = $.param({'dbname':db, 'colname': 'data.files', 'user': user, 'passwd': pwd});
-            $.ajax({
+            request = $.ajax({
                 url: 'https://acoustic.ifp.uiuc.edu:8081/query?'+queryString,
                 data: '{uploadDate:{$gte:{$date:"' + varargin.time1 + 'Z"}, $lte:{$date:"' + varargin.time2 + 'Z"}}}',
-                method:'POST', 
-                success:function(data, status){
-                    console.log(status);
-                    ret = JSON.parse(data);
-                },
-                timeOut: 10000,
-                async: false
+                type:'POST', 
+                timeOut: 10000
             });
         }
     }
+    request.done(function(data,status){
+        console.log(status);
+        ret = JSON.parse(data);
+    });
     return ret;
 };
