@@ -16,7 +16,20 @@ and open the template in the editor.
         <script src="js/sosv.min.js"></script>
         <script>
             $(function(){
-                new SOSV('data/alma-mater.json');
+                var toggle = false;
+                var tmp;
+                
+                setInterval(function(){
+                    if (toggle){
+                        delete tmp;
+                        tmp = new SOSV('data/alma-mater.json');
+                    }
+                    else{
+                        delete tmp;
+                        tmp = new SOSV('data/place-du-palais.json');
+                    }
+                    toggle = !toggle;
+                }, 15000);
             });
         </script>
         
