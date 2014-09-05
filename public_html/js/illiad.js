@@ -24,21 +24,23 @@
 
 var IllDownData = function(db, user, pwd, filename, cb){
     var queryString = $.param({'user':user, 'passwd': pwd, 'filename': filename});
-    /*
+    
     $.ajax({
         url: 'https://acoustic.ifp.uiuc.edu:8081/gridfs/'+db+'/data?'+queryString,
         type:'GET',
-        processData :'false',
+        dataType :'arraybuffer',
         timeOut: 10000,
         xhrFields: {
             withCredentials: true
         }
     }).success(function(data){
-        console.log('IllDownData ' + data[0]+data[1]+data[2]+data[3]+data[4]+data[5]);
-        console.log('data length ' +data.length);
+        console.log(data.byteLength);
         cb(data);
+    }).fail(function(){
+        console.log('ajax fail');
     });
-    */
+    
+    /*
     var request = new XMLHttpRequest();
     request.open('GET', 'https://acoustic.ifp.uiuc.edu:8081/gridfs/'+db+'/data?'+queryString, true);
     request.responseType = 'arraybuffer';
@@ -48,6 +50,7 @@ var IllDownData = function(db, user, pwd, filename, cb){
         cb(data);
     };
     request.send();
+    */
 };
 
 var IllDownEvent = function(db, user, pwd, filename, cb){
@@ -65,6 +68,8 @@ var IllDownEvent = function(db, user, pwd, filename, cb){
         var event = JSON.parse(data);
         console.log('IllDownEvent ' + event[0].filename);
         cb(event);
+    }).fail(function(){
+        console.log('ajax fail');
     });
 };
 
@@ -105,5 +110,7 @@ var IllTimeQuery = function (db, user, pwd, varargin, cb){
     request.success(function(data){
         file = JSON.parse(data);
         cb(file);
+    }).fail(function(){
+        console.log('ajax fail');
     });
 };

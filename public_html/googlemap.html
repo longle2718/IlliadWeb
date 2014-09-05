@@ -33,6 +33,7 @@ THE SOFTWARE.
         </script>
         <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
         <script src="js/illiad.js"></script>
+        <script src="js/jquery-ajax-blob-arraybuffer.js"></script>
 
         <script>
             var map;
@@ -92,17 +93,6 @@ THE SOFTWARE.
                 });
                 //IllDownData('publicDb', 'publicUser', 'publicPwd', '20140903072620320.wav');
                 //IllDownEvent('publicDb', 'publicUser', 'publicPwd', '20140903072620320.wav');
-            }
-            
-            function str2ab(str) {
-                // 1 bytes for each char
-                var buf = new ArrayBuffer(str.length);
-                console.log('str.length '+str.length);
-                var bufView = new Uint8Array(buf);
-                for (var i=0, strLen=str.length; i<strLen; i++) {
-                  bufView[i] = str.charCodeAt(i);
-                }
-                return buf;
             }
         </script>
         
