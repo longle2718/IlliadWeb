@@ -38,8 +38,7 @@ THE SOFTWARE.
             var map;
             var markerList = [];
             var infoWinList = [];
-            window.AudioContext = window.AudioContext || window.webkitAudioContext;
-            var context = new AudioContext();
+            var audioCtx = new AudioContext();
             
             function initialize(){
                 var mapProp = {
@@ -78,13 +77,13 @@ THE SOFTWARE.
                                 
                                 // Download sound data and play
                                 IllDownData('publicDb', 'publicUser', 'publicPwd', infoWinList[markerList.length-1].content, function(data){
-                                    var buffer = str2ab(data);
-                                    console.log('buffer ' + buffer[0]+buffer[1]+buffer[2]+buffer[3]);
-                                    context.decodeAudioData(buffer, function(buf){
-                                        var source = context.createBufferSource();
+                                    audioCtx.decodeAudioData(data, function(buf){
+                                        var source = audioCtx.createBufferSource();
                                         source.buffer = buf;
-                                        source.connect(context.destination);
+                                        source.connect(audioCtx.destination);
                                         source.start(0);
+                                    }, function(error){
+                                        console.log('audio decoding error');
                                     });
                                 });
                             });
@@ -96,8 +95,10 @@ THE SOFTWARE.
             }
             
             function str2ab(str) {
-                var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
-                var bufView = new Uint16Array(buf);
+                // 1 bytes for each char
+                var buf = new ArrayBuffer(str.length);
+                console.log('str.length '+str.length);
+                var bufView = new Uint8Array(buf);
                 for (var i=0, strLen=str.length; i<strLen; i++) {
                   bufView[i] = str.charCodeAt(i);
                 }

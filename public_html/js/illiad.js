@@ -24,17 +24,30 @@
 
 var IllDownData = function(db, user, pwd, filename, cb){
     var queryString = $.param({'user':user, 'passwd': pwd, 'filename': filename});
+    /*
     $.ajax({
         url: 'https://acoustic.ifp.uiuc.edu:8081/gridfs/'+db+'/data?'+queryString,
         type:'GET',
+        processData :'false',
         timeOut: 10000,
         xhrFields: {
             withCredentials: true
         }
     }).success(function(data){
-        console.log('IllDownData ' + data[0]+data[1]+data[2]+data[3]);
+        console.log('IllDownData ' + data[0]+data[1]+data[2]+data[3]+data[4]+data[5]);
+        console.log('data length ' +data.length);
         cb(data);
     });
+    */
+    var request = new XMLHttpRequest();
+    request.open('GET', 'https://acoustic.ifp.uiuc.edu:8081/gridfs/'+db+'/data?'+queryString, true);
+    request.responseType = 'arraybuffer';
+    request.onload = function() {
+        var data = request.response;
+        console.log(data.byteLength);
+        cb(data);
+    };
+    request.send();
 };
 
 var IllDownEvent = function(db, user, pwd, filename, cb){
