@@ -38,6 +38,8 @@ THE SOFTWARE.
             var map;
             var markerList = [];
             var infoWinList = [];
+            window.AudioContext = window.AudioContext || window.webkitAudioContext;
+            var context = new AudioContext();
             
             function initialize(){
                 var mapProp = {
@@ -76,12 +78,11 @@ THE SOFTWARE.
                                 
                                 // Download sound data and play
                                 IllDownData('publicDb', 'publicUser', 'publicPwd', infoWinList[markerList.length-1].content, function(data){
-                                    var waAPI = new AudioContext();
-                                    var source = waAPI.createBufferSource();
-                                    var buffer = str2ab(data.slice(44, data.length));
-                                    waAPI.decodeAudioData(buffer, function(buf){
+                                    var buffer = str2ab(data);
+                                    console.log('buffer ' + buffer[0]+buffer[1]+buffer[2]+buffer[3]);
+                                    context.decodeAudioData(buffer, function(buf){
+                                        var source = context.createBufferSource();
                                         source.buffer = buf;
-                                        console.log(buf[0]+buf[1]);
                                         source.connect(context.destination);
                                         source.start(0);
                                     });
@@ -93,6 +94,7 @@ THE SOFTWARE.
                 //IllDownData('publicDb', 'publicUser', 'publicPwd', '20140903072620320.wav');
                 //IllDownEvent('publicDb', 'publicUser', 'publicPwd', '20140903072620320.wav');
             }
+            
             function str2ab(str) {
                 var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
                 var bufView = new Uint16Array(buf);
