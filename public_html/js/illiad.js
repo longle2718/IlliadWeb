@@ -32,7 +32,7 @@ var IllDownData = function(db, user, pwd, filename, cb){
             withCredentials: true
         }
     }).success(function(data){
-        console.log(data[0]+data[1]+data[2]+data[3]);
+        console.log('IllDownData ' + data[0]+data[1]+data[2]+data[3]);
         cb(data);
     });
 };
@@ -50,7 +50,7 @@ var IllDownEvent = function(db, user, pwd, filename, cb){
         }
     }).success(function(data){
         var event = JSON.parse(data);
-        console.log(event[0].fs);
+        console.log('IllDownEvent ' + event[0].filename);
         cb(event);
     });
 };
@@ -90,7 +90,6 @@ var IllTimeQuery = function (db, user, pwd, varargin, cb){
         }
     }
     request.success(function(data){
-        console.log(data);
         file = JSON.parse(data);
         cb(file);
     });

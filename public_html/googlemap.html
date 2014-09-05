@@ -35,18 +35,20 @@ THE SOFTWARE.
         <script src="js/illiad.js"></script>
 
         <script>
-            function initialize()
-            {
-            var mapProp = {
-              center:new google.maps.LatLng(40.101952,-88.227162),
-              zoom:16,
-              mapTypeId:google.maps.MapTypeId.ROADMAP
-              };
-            var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+            var map;
+            var markerList = [];
+            var infoWinList = [];
+            
+            function initialize(){
+                var mapProp = {
+                    center:new google.maps.LatLng(40.101952,-88.227162),
+                    zoom:16,
+                    mapTypeId:google.maps.MapTypeId.ROADMAP
+                };
+                map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
             }
-
-            google.maps.event.addDomListener(window, 'load', initialize);
-        
+            google.maps.event.addDomListener(window, 'load', initialize); 
+            
             function mSearch() { 
                 var q = {
                     time1: document.getElementById("textbox1").value,
@@ -54,21 +56,30 @@ THE SOFTWARE.
                 };
                 IllTimeQuery('publicDb', 'publicUser', 'publicPwd', q, function(file){
                     for (var i = 0; i <file.length;i++){
-                        IllDownEvent(db, user, pwd, file[i].filename, function(event){
-                            var marker=new google.maps.Marker({
+                        IllDownEvent('publicDb', 'publicUser', 'publicPwd', file[i].filename, function(event){
+                            // Create a marker for each event
+                            markerList.push(new google.maps.Marker({
                                 position:new google.maps.LatLng(event[0].location.latitude,event[0].location.longtitude)
+                            }));
+                            markerList[i].setMap(map);
+                            
+                            // Attach a info window for each marker
+                            infoWinList.push(new google.maps.InfoWindow({
+                                content:event[0].filename
+                            }));
+                            google.maps.event.addListener(markerList[i], 'click', function() {
+                                infowindowList[i].open(map,markerList[i]);
                             });
-                            marker.setMap(map);
-                            
                         });
-                        IllDownData(db, user, pwd, file[i].filename, function(data){
-                            
+                        
+                        IllDownData('publicDb', 'publicUser', 'publicPwd', file[i].filename, function(data){
+
                         });
                     }
                 });
                 //IllDownData('publicDb', 'publicUser', 'publicPwd', '20140903072620320.wav');
                 //IllDownEvent('publicDb', 'publicUser', 'publicPwd', '20140903072620320.wav');
-            } 
+            }
         </script>
         
         <!-- Basic CSS -->
