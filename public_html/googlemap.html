@@ -41,15 +41,17 @@ THE SOFTWARE.
             
             function initialize(){
                 var mapProp = {
-                    center:new google.maps.LatLng(40.101952,-88.227162),
-                    zoom:16,
+                    center:new google.maps.LatLng(40.109789,-88.227261),
+                    zoom:15,
                     mapTypeId:google.maps.MapTypeId.ROADMAP
                 };
                 map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
             }
             google.maps.event.addDomListener(window, 'load', initialize); 
             
-            function mSearch() { 
+            function mSearch() {
+                markerList.length = 0;
+                infoWinList.length = 0;
                 var q = {
                     time1: document.getElementById("textbox1").value,
                     time2: document.getElementById("textbox2").value
@@ -59,21 +61,24 @@ THE SOFTWARE.
                         IllDownEvent('publicDb', 'publicUser', 'publicPwd', file[i].filename, function(event){
                             // Create a marker for each event
                             markerList.push(new google.maps.Marker({
-                                position:new google.maps.LatLng(event[0].location.latitude,event[0].location.longtitude)
+                                position:new google.maps.LatLng(parseFloat(event[0].location.latitute), parseFloat(event[0].location.longtitude))
                             }));
-                            markerList[i].setMap(map);
+                            console.log(markerList[markerList.length-1].position);
+                            console.log('latitude ' + event[0].location.latitute);
+                            console.log('longtitude '+ event[0].location.longtitude);
+                            markerList[markerList.length-1].setMap(map);
                             
                             // Attach a info window for each marker
                             infoWinList.push(new google.maps.InfoWindow({
                                 content:event[0].filename
                             }));
-                            google.maps.event.addListener(markerList[i], 'click', function() {
-                                infowindowList[i].open(map,markerList[i]);
-                            });
-                        });
-                        
-                        IllDownData('publicDb', 'publicUser', 'publicPwd', file[i].filename, function(data){
+                            google.maps.event.addListener(markerList[markerList.length-1], 'click', function() {
+                                infoWinList[markerList.length-1].open(map,markerList[markerList.length-1]);
+                                // Download sound data and play
+                                IllDownData('publicDb', 'publicUser', 'publicPwd', file[i].filename, function(data){
 
+                                });
+                            });
                         });
                     }
                 });

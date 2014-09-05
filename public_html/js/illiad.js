@@ -63,7 +63,7 @@ var IllTimeQuery = function (db, user, pwd, varargin, cb){
         var queryString = $.param({'dbname':db, 'colname': 'data.files', 'user': user, 'passwd': pwd});
         request = $.ajax({
             url: 'https://acoustic.ifp.uiuc.edu:8081/query?'+queryString,
-            data: '{uploadDate:{$gte:{$date:"' + varargin.time1 + 'Z"}}}',
+            data: '{uploadDate:{$gte:{$date:"' + varargin.time1 + '"}}}',
             type:'POST',
             dataType: 'text',
             timeOut: 10000
@@ -73,7 +73,7 @@ var IllTimeQuery = function (db, user, pwd, varargin, cb){
             var queryString = $.param({'dbname':db, 'colname': 'data.files', 'user': user, 'passwd': pwd, 'limit':varargin.limit});
             request = $.ajax({
                 url: 'https://acoustic.ifp.uiuc.edu:8081/query?'+queryString,
-                data: '{uploadDate:{$gte:{$date:"' + varargin.time1 + 'Z"}}}',
+                data: '{uploadDate:{$gte:{$date:"' + varargin.time1 + '"}}}',
                 type:'POST',
                 dataType: 'text',
                 timeOut: 10000
@@ -82,7 +82,7 @@ var IllTimeQuery = function (db, user, pwd, varargin, cb){
             var queryString = $.param({'dbname':db, 'colname': 'data.files', 'user': user, 'passwd': pwd});
             request = $.ajax({
                 url: 'https://acoustic.ifp.uiuc.edu:8081/query?'+queryString,
-                data: '{uploadDate:{$gte:{$date:"' + varargin.time1 + 'Z"}, $lte:{$date:"' + varargin.time2 + 'Z"}}}',
+                data: '{uploadDate:{$gte:{$date:"' + varargin.time1 + '"}, $lte:{$date:"' + varargin.time2 + 'Z"}}}',
                 type:'POST',
                 dataType: 'text',
                 timeOut: 10000
