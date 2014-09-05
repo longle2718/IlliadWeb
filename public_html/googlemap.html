@@ -64,8 +64,6 @@ THE SOFTWARE.
                                 position:new google.maps.LatLng(parseFloat(event[0].location.latitute), parseFloat(event[0].location.longtitude))
                             }));
                             console.log(markerList[markerList.length-1].position);
-                            console.log('latitude ' + event[0].location.latitute);
-                            console.log('longtitude '+ event[0].location.longtitude);
                             markerList[markerList.length-1].setMap(map);
                             
                             // Attach a info window for each marker
@@ -74,9 +72,19 @@ THE SOFTWARE.
                             }));
                             google.maps.event.addListener(markerList[markerList.length-1], 'click', function() {
                                 infoWinList[markerList.length-1].open(map,markerList[markerList.length-1]);
+                                console.log(infoWinList[markerList.length-1].content);
+                                
                                 // Download sound data and play
-                                IllDownData('publicDb', 'publicUser', 'publicPwd', file[i].filename, function(data){
-
+                                IllDownData('publicDb', 'publicUser', 'publicPwd', infoWinList[markerList.length-1].content, function(data){
+                                    var waAPI = new AudioContext();
+                                    var source = waAPI.createBufferSource();
+                                    var buffer = str2ab(data.slice(44, data.length));
+                                    waAPI.decodeAudioData(buffer, function(buf){
+                                        source.buffer = buf;
+                                        console.log(buf[0]+buf[1]);
+                                        source.connect(context.destination);
+                                        source.start(0);
+                                    });
                                 });
                             });
                         });
@@ -84,6 +92,14 @@ THE SOFTWARE.
                 });
                 //IllDownData('publicDb', 'publicUser', 'publicPwd', '20140903072620320.wav');
                 //IllDownEvent('publicDb', 'publicUser', 'publicPwd', '20140903072620320.wav');
+            }
+            function str2ab(str) {
+                var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
+                var bufView = new Uint16Array(buf);
+                for (var i=0, strLen=str.length; i<strLen; i++) {
+                  bufView[i] = str.charCodeAt(i);
+                }
+                return buf;
             }
         </script>
         
