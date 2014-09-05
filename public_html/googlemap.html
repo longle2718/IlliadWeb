@@ -46,17 +46,28 @@ THE SOFTWARE.
             }
 
             google.maps.event.addDomListener(window, 'load', initialize);
-        </script>
         
-        <script type="text/javascript">
             function mSearch() { 
                 var q = {
                     time1: document.getElementById("textbox1").value,
                     time2: document.getElementById("textbox2").value
                 };
-                //var file = IllTimeQuery('publicDb', 'publicUser', 'publicPwd', q);
+                IllTimeQuery('publicDb', 'publicUser', 'publicPwd', q, function(file){
+                    for (var i = 0; i <file.length;i++){
+                        IllDownEvent(db, user, pwd, file[i].filename, function(event){
+                            var marker=new google.maps.Marker({
+                                position:new google.maps.LatLng(event[0].location.latitude,event[0].location.longtitude)
+                            });
+                            marker.setMap(map);
+                            
+                        });
+                        IllDownData(db, user, pwd, file[i].filename, function(data){
+                            
+                        });
+                    }
+                });
                 //IllDownData('publicDb', 'publicUser', 'publicPwd', '20140903072620320.wav');
-                var tmp = IllDownEvent('publicDb', 'publicUser', 'publicPwd', '20140903072620320.wav');
+                //IllDownEvent('publicDb', 'publicUser', 'publicPwd', '20140903072620320.wav');
             } 
         </script>
         

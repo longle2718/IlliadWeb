@@ -22,45 +22,40 @@
  * THE SOFTWARE.
  */
 
-var IllDownData = function(db, user, pwd, filename){
+var IllDownData = function(db, user, pwd, filename, cb){
     var queryString = $.param({'user':user, 'passwd': pwd, 'filename': filename});
-    var request = $.ajax({
+    $.ajax({
         url: 'https://acoustic.ifp.uiuc.edu:8081/gridfs/'+db+'/data?'+queryString,
         type:'GET',
         timeOut: 10000,
         xhrFields: {
             withCredentials: true
         }
-    });
-    request.done(function(data,status){
-        console.log(status);
-        console.log(data[1]+data[2]+data[3]+data[4]);
+    }).success(function(data){
+        console.log(data[0]+data[1]+data[2]+data[3]);
+        cb(data);
     });
 };
 
-var IllDownEvent = function(db, user, pwd, filename){
-    var ret;
+var IllDownEvent = function(db, user, pwd, filename, cb){
     var queryString = $.param({'dbname':db, 'colname':'event', 'user':user, 'passwd': pwd});
-    var  request = $.ajax({
+    $.ajax({
         url: 'https://acoustic.ifp.uiuc.edu:8081/query?'+queryString,
         data: '{filename:"'+filename+'"}',
-        type:'POST', 
+        type:'POST',
+        dataType: 'text',
         timeOut: 10000,
         xhrFields: {
             withCredentials: true
         }
+    }).success(function(data){
+        var event = JSON.parse(data);
+        console.log(event[0].fs);
+        cb(event);
     });
-    request.done(function(data,status){
-        console.log(status);
-        console.log(data);
-        //ret = JSON.parse(data);
-        ret = data;
-    });
-    return ret;
 };
 
-var IllTimeQuery = function (db, user, pwd, varargin){
-    var ret;
+var IllTimeQuery = function (db, user, pwd, varargin, cb){
     var  request;
     //var tZoneOffset = 5/24;
     
@@ -69,7 +64,8 @@ var IllTimeQuery = function (db, user, pwd, varargin){
         request = $.ajax({
             url: 'https://acoustic.ifp.uiuc.edu:8081/query?'+queryString,
             data: '{uploadDate:{$gte:{$date:"' + varargin.time1 + 'Z"}}}',
-            type:'POST', 
+            type:'POST',
+            dataType: 'text',
             timeOut: 10000
         });
     } else{
@@ -78,7 +74,8 @@ var IllTimeQuery = function (db, user, pwd, varargin){
             request = $.ajax({
                 url: 'https://acoustic.ifp.uiuc.edu:8081/query?'+queryString,
                 data: '{uploadDate:{$gte:{$date:"' + varargin.time1 + 'Z"}}}',
-                type:'POST', 
+                type:'POST',
+                dataType: 'text',
                 timeOut: 10000
             });
         } else if(varargin.hasOwnProperty('time2')) {
@@ -86,14 +83,15 @@ var IllTimeQuery = function (db, user, pwd, varargin){
             request = $.ajax({
                 url: 'https://acoustic.ifp.uiuc.edu:8081/query?'+queryString,
                 data: '{uploadDate:{$gte:{$date:"' + varargin.time1 + 'Z"}, $lte:{$date:"' + varargin.time2 + 'Z"}}}',
-                type:'POST', 
+                type:'POST',
+                dataType: 'text',
                 timeOut: 10000
             });
         }
     }
-    request.done(function(data,status){
-        console.log(status);
-        ret = JSON.parse(data);
+    request.success(function(data){
+        console.log(data);
+        file = JSON.parse(data);
+        cb(file);
     });
-    return ret;
 };
