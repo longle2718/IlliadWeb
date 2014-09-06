@@ -46,32 +46,34 @@ and open the template in the editor.
             $(function(){
                 sosv = new SOSV(data);
                 var myTimer=setInterval(function(){updateData();},10000);
-                var myTimer2=setInterval(function(){
-                    console.log('Reload SOSV sound set');
-                    
-                    sosv.unloadSounds();
-                    sosv.markers = [];
-                    sosv.arrSounds = [];
-                    sosv.soundCount = 0;
-                    
-                    sosv.soundCount = data.sounds.length;
-                    sosv.loadSounds(data);
-                    if (!sosv.soundCount) {
-                        sosv.onSoundLoaded(null);
-                    }
-                }, 10000);
             });
             
             function updateData(){
+                console.log('Reload SOSV sound set');
+                    
+                sosv.unloadSounds();
+                sosv.markers = [];
+                sosv.arrSounds = [];
+                sosv.soundCount = 0;
+
+                sosv.soundCount = data.sounds.length;
+                sosv.loadSounds(data);
+                /*
+                if (!sosv.soundCount) {
+                    sosv.onSoundLoaded(null);
+                }
+                */
+               
                 var currTime = new Date().toISOString();
                 var q = {
                     time1: lastTime,
                     time2: currTime
                 };
+                
+                // clear old sound set
+                data.sounds = [];
+                
                 IllTimeQuery('publicDb', 'publicUser', 'publicPwd', q, function(file){
-                    // clear old sound set
-                    data.sounds = [];
-                    
                     console.log('forming new sound set');
                     for (var i = 0; i <file.length; i++){
                         lastTime = new Date(new Date(file[i].uploadDate.$date).valueOf()+1).toISOString();
@@ -84,8 +86,8 @@ and open the template in the editor.
                                 lat: event[0].location.latitute,
                                 lng: event[0].location.longtitude,
                                 src: ['https://acoustic.ifp.uiuc.edu:8081/gridfs/'+'publicDb'+'/data?'+queryString],
-                                db: "100",
-                                pause: "0"
+                                pause: "1",
+                                db: "100"
                             };
                             data.sounds.push(sound);
                             console.log('sound.src '+sound.src);

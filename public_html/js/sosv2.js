@@ -92,6 +92,7 @@ var Sound = function(json, panorama, _sosv){
 		obj.sound.play();
 
 		// Manually loop the sound, interspesed with pauses, if we have a pause value for this object
+                /*
 		if (parseFloat(obj.data.pause)) {
 			
 			obj.sound.on('end', function(){
@@ -104,6 +105,7 @@ var Sound = function(json, panorama, _sosv){
 
 			});
 		}
+                */
 	};
 
 	this.stopSound = function(){
@@ -251,9 +253,11 @@ var SOSV = function(data){
 		self.loadSounds(data);
 
 		// Manually trigger onSoundLoaded if there are no sounds in the json data
+                /*
 		if (!self.soundCount) {
 			self.onSoundLoaded(null);
 		}
+                */
 	};
 
 	this.createStreetView = function(data){
