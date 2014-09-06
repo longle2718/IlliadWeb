@@ -21,8 +21,8 @@ and open the template in the editor.
             var data = {
                 id: "pano",
     
-                lat: "40.114216",
-                lng: "-88.22303",
+                lat: "40.114121",
+                lng: "-88.2229818",
                 heading: "60",
                 pitch: "1",
 
@@ -65,21 +65,19 @@ and open the template in the editor.
                         //lastTime = new Date(new Date(file[i].uploadDate.$date).valueOf()+1);
                         lastTime = new Date(new Date(file[i].uploadDate.$date).valueOf()+1).toISOString();
                         
-                        // construct a sound object
-                        var queryString = $.param({'user':'publicUser', 'passwd': 'publicPwd', 'filename': file[i].filename});
-                        var sound = {
-                            name: file[i].filename,
-                            lat: null,
-                            lng: null,
-                            src: ['https://acoustic.ifp.uiuc.edu:8081/gridfs/'+'publicDb'+'/data?'+queryString],
-                            db: "100",
-                            pause: "0"
-                        };
-                        console.log('sound.src '+sound.src);
                         IllDownEvent('publicDb', 'publicUser', 'publicPwd', file[i].filename, function(event){
-                            sound.lat = event[0].location.latitute;
-                            sound.lng = event[0].location.longtitude;
+                            // construct a sound object
+                            var queryString = $.param({'user':'publicUser', 'passwd': 'publicPwd', 'filename': event[0].filename});
+                            var sound = {
+                                name: event[0].filename,
+                                lat: event[0].location.latitute,
+                                lng: event[0].location.longtitude,
+                                src: ['https://acoustic.ifp.uiuc.edu:8081/gridfs/'+'publicDb'+'/data?'+queryString],
+                                db: "100",
+                                pause: "0"
+                            };
                             data.sounds.push(sound);
+                            console.log('sound.src '+sound.src);
                             console.log('sound.lat '+sound.lat+', sound.lng '+sound.lng);
                         });
                     }
