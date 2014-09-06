@@ -40,6 +40,7 @@ THE SOFTWARE.
             var markerList = [];
             var infoWinList = [];
             var audioCtx = new AudioContext();
+            var myTimer=setInterval(function(){getCurrTime()},1000);
             
             function initialize(){
                 var mapProp = {
@@ -94,8 +95,12 @@ THE SOFTWARE.
                 //IllDownData('publicDb', 'publicUser', 'publicPwd', '20140903072620320.wav');
                 //IllDownEvent('publicDb', 'publicUser', 'publicPwd', '20140903072620320.wav');
             }
+       
+            function getCurrTime() {
+                var d = new Date();
+                document.getElementById('time').innerHTML = d.toISOString();
+            }
         </script>
-        
         <!-- Basic CSS -->
         <style>
             #googleMap {
@@ -104,9 +109,13 @@ THE SOFTWARE.
                 position: absolute;
                 background: #000;
             }
+            #time{
+                position: absolute;
+                bottom: 100px;
+            }
             #textbox1{
                 position: absolute;
-                bottom: 60px;
+                bottom: 70px;
             }
             #textbox2{
                 position: absolute;
@@ -123,5 +132,6 @@ THE SOFTWARE.
         <input type="text" name="textbox1" id="textbox1" />
         <input type="text" name="textbox2" id="textbox2" /> 
         <input type="submit" name="button" id="button1" onclick="mSearch()" value="Search" />
+        <p id="time"></p>
     </body>
 </html>

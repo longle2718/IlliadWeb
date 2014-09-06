@@ -14,23 +14,31 @@ and open the template in the editor.
         <script src="//maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
         <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
         <script src="js/sosv.min.js"></script>
+        <script src="js/illiad.js"></script>
         <script>
+            var myTimer=setInterval(function(){update()},10000);
+            var lastTime = new Date().toISOString();
+            
             $(function(){
-                var toggle = false;
-                var tmp;
-                
-                setInterval(function(){
-                    if (toggle){
-                        delete tmp;
-                        tmp = new SOSV('data/alma-mater.json');
-                    }
-                    else{
-                        delete tmp;
-                        tmp = new SOSV('data/place-du-palais.json');
-                    }
-                    toggle = !toggle;
-                }, 15000);
+                var sosv = new SOSV('data/demo.json');
             });
+            
+            function update(){
+                var currTime = new Date().toISOString();
+                var q = {
+                    time1: lastTime,
+                    time2: currTime
+                };
+                IllTimeQuery('publicDb', 'publicUser', 'publicPwd', q, function(file){
+                    for (var i = 0; i <file.length; i++){
+                        lastTime = file[i].uploadDate.x0x24_date;
+                        IllDownEvent('publicDb', 'publicUser', 'publicPwd', file[i].filename, function(data){
+                            console.log('download new data');
+                            //sosv.loadSound();
+                        });
+                    }
+                });
+            }
         </script>
         
         <!-- Some basic CSS -->
