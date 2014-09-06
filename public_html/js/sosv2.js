@@ -62,6 +62,7 @@ var Sound = function(json, panorama, _sosv){
 		obj.sound = new Howl({  
 			urls: obj.data.src, 
 			loop: loop,
+                        format: "audio/wav",
 			onload: obj.onSoundLoaded,
 			onloaderror: obj.onSoundLoadError
 		});
@@ -329,6 +330,14 @@ var SOSV = function(data){
 		for (var i=0; i < self.arrSounds.length; i++) {
 			self.arrSounds[i].playSound();
 			self.arrSounds[i].onUserMovement(null, panorama);
+		}
+	};
+        
+        this.unloadSounds = function(){
+
+		// Start all sounds and trigger onUserMovement to set filters/pans etc
+		for (var i=0; i < self.arrSounds.length; i++) {
+			self.arrSounds[i].unloadSound();
 		}
 	};
 

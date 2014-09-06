@@ -34,7 +34,7 @@ and open the template in the editor.
                         "src": [
                             "audio/accordian.mp3"
                         ],
-                        "db": "80",
+                        "db": "100",
                         "pause": "0"
                     }
                 ]
@@ -46,6 +46,12 @@ and open the template in the editor.
                 var myTimer=setInterval(function(){updateData();},10000);
                 var myTimer2=setInterval(function(){
                     console.log('Reload SOSV sound set');
+                    
+                    sosv.unloadSounds();
+                    sosv.markers = [];
+                    sosv.arrSounds = [];
+                    sosv.soundCount = 0;
+                    
                     sosv.soundCount = data.sounds.length;
                     sosv.loadSounds(data);
                     if (!sosv.soundCount) {
