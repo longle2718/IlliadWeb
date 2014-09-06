@@ -13,14 +13,28 @@ and open the template in the editor.
         <!-- Javascript -->
         <script src="//maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
         <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
-        <script src="js/sosv.min.js"></script>
+        <script src="js/howler.js"></script>
+        <script src="js/sosv2.js"></script>
         <script src="js/illiad.js"></script>
         <script>
-            var myTimer=setInterval(function(){update()},10000);
             var lastTime = new Date().toISOString();
+            var data = {
+                id: "pano",
+    
+                lat: "40.114216",
+                lng: "-88.22303",
+                heading: "60",
+                pitch: "1",
+
+                sounds: [
+
+                ]
+            };
+            var sosv = null;
             
             $(function(){
-                var sosv = new SOSV('data/demo.json');
+                var myTimer=setInterval(function(){update()},15000);
+                sosv = new SOSV(data);
             });
             
             function update(){
@@ -30,13 +44,38 @@ and open the template in the editor.
                     time2: currTime
                 };
                 IllTimeQuery('publicDb', 'publicUser', 'publicPwd', q, function(file){
+                    var loadCnt = file.length;
+                    
+                    // clear old sound set
+                    data.sounds = [];
+                    
+                    console.log('forming new sound set');
                     for (var i = 0; i <file.length; i++){
                         lastTime = file[i].uploadDate.x0x24_date;
-                        IllDownEvent('publicDb', 'publicUser', 'publicPwd', file[i].filename, function(data){
-                            console.log('download new data');
-                            //sosv.loadSound();
+                        
+                        // construct a sound object
+                        var queryString = $.param({'user':'publicUser', 'passwd': 'publicPwd', 'filename': file[i].filename});
+                        var sound = {
+                            name: file[i].filename,
+                            lat: null,
+                            lng: null,
+                            src: 'https://acoustic.ifp.uiuc.edu:8081/gridfs/'+'publicDb'+'/data?'+queryString,
+                            db: "100",
+                            pause: "0"
+                        };
+                        console.log('sound.src '+sound.src);
+                        IllDownEvent('publicDb', 'publicUser', 'publicPwd', file[i].filename, function(event){
+                            sound.lat = event[0].location.latitute;
+                            sound.lng = event[0].location.longtitude;
+                            console.log('sound.lat '+sound.lat+', sound.lng '+sound.lng);
+                            data.sounds[i] = sound;
+                            loadCnt--;
                         });
                     }
+                    
+                    while(loadCnt >0);
+                    // play new set of sound
+                    sosv.loadSounds(data);
                 });
             }
         </script>
