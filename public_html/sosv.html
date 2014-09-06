@@ -27,31 +27,43 @@ and open the template in the editor.
                 pitch: "1",
 
                 sounds: [
-
+                    {
+                        "name": "accordion",
+                        "lat": "43.950648973687",
+                        "lng": "4.806433016568121",
+                        "src": [
+                            "audio/accordian.mp3"
+                        ],
+                        "db": "80",
+                        "pause": "0"
+                    }
                 ]
             };
             var sosv = null;
             
             $(function(){
-                var myTimer=setInterval(function(){update()},15000);
                 sosv = new SOSV(data);
+                var myTimer=setInterval(function(){updateData();},10000);
+                var myTimer2=setInterval(function(){
+                    console.log('Reload SOSV sound set');
+                    sosv.loadSounds(data);
+                }, 10000);
             });
             
-            function update(){
+            function updateData(){
                 var currTime = new Date().toISOString();
                 var q = {
                     time1: lastTime,
                     time2: currTime
                 };
                 IllTimeQuery('publicDb', 'publicUser', 'publicPwd', q, function(file){
-                    var loadCnt = file.length;
-                    
                     // clear old sound set
                     data.sounds = [];
                     
                     console.log('forming new sound set');
                     for (var i = 0; i <file.length; i++){
-                        lastTime = file[i].uploadDate.x0x24_date;
+                        //lastTime = new Date(new Date(file[i].uploadDate.$date).valueOf()+1);
+                        lastTime = new Date(new Date(file[i].uploadDate.$date).valueOf()+1).toISOString();
                         
                         // construct a sound object
                         var queryString = $.param({'user':'publicUser', 'passwd': 'publicPwd', 'filename': file[i].filename});
@@ -59,7 +71,7 @@ and open the template in the editor.
                             name: file[i].filename,
                             lat: null,
                             lng: null,
-                            src: 'https://acoustic.ifp.uiuc.edu:8081/gridfs/'+'publicDb'+'/data?'+queryString,
+                            src: ['https://acoustic.ifp.uiuc.edu:8081/gridfs/'+'publicDb'+'/data?'+queryString],
                             db: "100",
                             pause: "0"
                         };
@@ -67,15 +79,10 @@ and open the template in the editor.
                         IllDownEvent('publicDb', 'publicUser', 'publicPwd', file[i].filename, function(event){
                             sound.lat = event[0].location.latitute;
                             sound.lng = event[0].location.longtitude;
+                            data.sounds.push(sound);
                             console.log('sound.lat '+sound.lat+', sound.lng '+sound.lng);
-                            data.sounds[i] = sound;
-                            loadCnt--;
                         });
                     }
-                    
-                    while(loadCnt >0);
-                    // play new set of sound
-                    sosv.loadSounds(data);
                 });
             }
         </script>
