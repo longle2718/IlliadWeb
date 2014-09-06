@@ -29,8 +29,8 @@ and open the template in the editor.
                 sounds: [
                     {
                         "name": "accordion",
-                        "lat": "43.950648973687",
-                        "lng": "4.806433016568121",
+                        "lat": "40.114121",
+                        "lng": "-88.2229818",
                         "src": [
                             "audio/accordian.mp3"
                         ],
@@ -46,7 +46,11 @@ and open the template in the editor.
                 var myTimer=setInterval(function(){updateData();},10000);
                 var myTimer2=setInterval(function(){
                     console.log('Reload SOSV sound set');
+                    sosv.soundCount = data.sounds.length;
                     sosv.loadSounds(data);
+                    if (!sosv.soundCount) {
+                        sosv.onSoundLoaded(null);
+                    }
                 }, 10000);
             });
             
@@ -62,7 +66,6 @@ and open the template in the editor.
                     
                     console.log('forming new sound set');
                     for (var i = 0; i <file.length; i++){
-                        //lastTime = new Date(new Date(file[i].uploadDate.$date).valueOf()+1);
                         lastTime = new Date(new Date(file[i].uploadDate.$date).valueOf()+1).toISOString();
                         
                         IllDownEvent('publicDb', 'publicUser', 'publicPwd', file[i].filename, function(event){

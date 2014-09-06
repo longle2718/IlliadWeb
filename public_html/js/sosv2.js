@@ -199,12 +199,12 @@ var Sound = function(json, panorama, _sosv){
 
 var SOSV = function(data){
 	
-	var self = this,
-		el,
-		panorama,
-		markers = [],
-		arrSounds = [],
-		soundCount = 0;
+	var self = this;
+        this.el = null;
+	this.panorama = null;
+	this.markers = [];
+	this.arrSounds = [];
+	this.soundCount = 0;
 
 	this.init = function(){
 		
@@ -244,13 +244,13 @@ var SOSV = function(data){
 
 	this.onJsonLoaded = function(data){
 		
-		soundCount = data.sounds.length;
+		self.soundCount = data.sounds.length;
 
 		self.createStreetView(data);
 		self.loadSounds(data);
 
 		// Manually trigger onSoundLoaded if there are no sounds in the json data
-		if (!soundCount) {
+		if (!self.soundCount) {
 			self.onSoundLoaded(null);
 		}
 	};
@@ -281,7 +281,7 @@ var SOSV = function(data){
 		    draggable 	: data.draggable,
 		    icon 		: data.icon
 		});
-		markers.push(marker);
+		self.markers.push(marker);
 
 		google.maps.event.addListener(marker, 'click', function(e) {
 			$(document.body).trigger('markerClicked', [e, marker, data]);
@@ -309,16 +309,16 @@ var SOSV = function(data){
 		// Create all the sounds objects, and store in array
 		for (var i=0; i < data.sounds.length; i++) {
 			var sound = new Sound(data.sounds[i], panorama, self);
-			arrSounds.push(sound);
+			self.arrSounds.push(sound);
 		}
 	};
 
 	this.onSoundLoaded = function(e){
 
-		soundCount--;
+		self.soundCount--;
 
 		// All sounds loaded?
-		if (soundCount <= 0) {
+		if (self.soundCount <= 0) {
 			self.playSounds();
 		}
 	};
@@ -326,9 +326,9 @@ var SOSV = function(data){
 	this.playSounds = function(){
 
 		// Start all sounds and trigger onUserMovement to set filters/pans etc
-		for (var i=0; i < arrSounds.length; i++) {
-			arrSounds[i].playSound();
-			arrSounds[i].onUserMovement(null, panorama);
+		for (var i=0; i < self.arrSounds.length; i++) {
+			self.arrSounds[i].playSound();
+			self.arrSounds[i].onUserMovement(null, panorama);
 		}
 	};
 
