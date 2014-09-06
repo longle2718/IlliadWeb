@@ -62,7 +62,7 @@ var Sound = function(json, panorama, _sosv){
 		obj.sound = new Howl({  
 			urls: obj.data.src, 
 			loop: loop,
-                        format: "audio/wav",
+                        format: "wav",
 			onload: obj.onSoundLoaded,
 			onloaderror: obj.onSoundLoadError
 		});
