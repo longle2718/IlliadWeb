@@ -51,11 +51,13 @@ and open the template in the editor.
             function updateData(){
                 console.log('Reload SOSV sound set');
                     
+                // clear SOSV structure
                 sosv.unloadSounds();
                 sosv.markers = [];
                 sosv.arrSounds = [];
                 sosv.soundCount = 0;
 
+                // Load new data into SOSV structure
                 sosv.soundCount = data.sounds.length;
                 sosv.loadSounds(data);
                 /*
