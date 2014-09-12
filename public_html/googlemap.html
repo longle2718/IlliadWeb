@@ -45,7 +45,9 @@ THE SOFTWARE.
             var audioCtx = new AudioContext();
             
             $(function(){
-                var myTimer=setInterval(function(){updateCurrTime();},1000);
+                $("#textbox1").val(new Date().toISOString());
+                $("#textbox2").val(new Date().toISOString());
+                setInterval(function(){updateCurrTime();},1000);
             });
             
             function initialize(){
@@ -72,7 +74,8 @@ THE SOFTWARE.
                 });
                 oms.addListener('spiderfy', function(markers) {
                     for (var i = 0; i <markers.length;i++){
-                        // Using function closure
+                        // Using function closure. () is to evaluate function immediately instead of 
+                        // just a function pointer.
                         google.maps.event.addListener(markers[i], 'mouseover', (function(marker) {
                             return function(){
                                 iw.setContent(marker.desc);
@@ -146,15 +149,14 @@ THE SOFTWARE.
             }
             #time{
                 position: absolute;
-                bottom: 100px;
+                bottom: 140px;
             }
-            #textbox1{
+            #form1{
                 position: absolute;
-                bottom: 70px;
+                bottom: 50px;
             }
-            #textbox2{
-                position: absolute;
-                bottom: 40px;
+            .label1{
+                display: block;
             }
             #button1{
                 position: absolute;
@@ -164,8 +166,10 @@ THE SOFTWARE.
     </head>
     <body>
         <div id="googleMap"></div>
-        <input type="text" name="textbox1" id="textbox1" value="2014-09-05T04:20:38.676Z"/>
-        <input type="text" name="textbox2" id="textbox2" value="2014-09-05T04:25:38.676Z"/>
+        <form id="form1">
+        <label class="label1">From:</label> <input size="25" type="text" name="textbox1" id="textbox1" value="2014-09-05T04:20:38.676Z"/><br>
+        <label class="label1">To:</label> <input size="25" type="text" name="textbox2" id="textbox2" value="2014-09-05T04:25:38.676Z"/>
+        </form>
         <input type="submit" name="button" id="button1" onclick="mSearch()" value="Search" />
         <p id="time"></p>
     </body>
