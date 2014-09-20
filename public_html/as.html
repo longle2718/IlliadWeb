@@ -105,8 +105,14 @@ THE SOFTWARE.
                 });
             }
             google.maps.event.addDomListener(window, 'load', initialize); 
-                
-            function mSearch() {
+            
+            // Acoustic search
+            // 
+            // Long Le
+            // University of Illinois
+            // longle1@illinois
+            //
+            function acousticSearch() {
                 var markers = oms.getMarkers();
                 for (var i = 0; i <markers.length;i++){
                     markers[i].setMap(null);
@@ -136,41 +142,69 @@ THE SOFTWARE.
        
             function updateCurrTime() {
                 var d = new Date();
-                document.getElementById('time').innerHTML = d.toISOString();
+                document.getElementById('time').innerHTML = 'Time '+d.toISOString();
             }
         </script>
         <!-- Basic CSS -->
         <style>
             #googleMap {
-                width: 100%;
+                width: 85%;
                 height: 100%;
                 position: absolute;
                 background: #000;
             }
-            #time{
+            #forms{
                 position: absolute;
-                bottom: 140px;
-            }
-            #form1{
-                position: absolute;
-                bottom: 50px;
+                right: 0%;
             }
             .label1{
                 display: block;
             }
             #button1{
-                position: absolute;
-                bottom: 10px;
+                font-size: large;
             }
         </style>
     </head>
     <body>
         <div id="googleMap"></div>
-        <form id="form1">
-        <label class="label1">From:</label> <input size="25" type="text" name="textbox1" id="textbox1" value="2014-09-05T04:20:38.676Z"/><br>
-        <label class="label1">To:</label> <input size="25" type="text" name="textbox2" id="textbox2" value="2014-09-05T04:25:38.676Z"/>
-        </form>
-        <input type="submit" name="button" id="button1" onclick="mSearch()" value="Search" />
-        <p id="time"></p>
+
+        <div id="forms">
+            <form id="formTime">
+                <fieldset>
+                    <legend id="time">Time</legend>
+                    <label class="label1">From</label> <input size="25" type="text" id="textbox1" value="2014-09-05T04:20:38.676Z"/><br>
+                    <label class="label1">To</label> <input size="25" type="text" id="textbox2" value="2014-09-05T04:25:38.676Z"/>
+                </fieldset>
+            </form>
+
+            <form id="formFreq">
+                <fieldset>
+                    <legend id="freq">Frequency</legend>
+                    <label class="label1">Center frequency (Hz)</label> <input size="25" type="text" id="centFreq" value="2000"/><br>
+                    <label class="label1">Bandwidth (Hz)</label> <input size="25" type="text" id="bandwidth" value="2000"/>
+                </fieldset>
+            </form>
+
+            <form id="formLoc">
+                <fieldset>
+                    <legend id="loc">Location</legend>
+                    <label class="label1">Latitude</label> <input size="25" type="text" id="lat" value="40.1069855"/><br>
+                    <label class="label1">Longitude</label> <input size="25" type="text" id="lng" value="-88.2244681"/><br>
+                    <label class="label1">Radius (km)</label> <input size="25" type="text" id="rad" value="1"/>
+                </fieldset>
+            </form>
+
+            <form id="formSpeech">
+                <fieldset>
+                    <legend id="speech">Speech</legend>
+                    <label class="label1">Keywords</label> <input size="25" type="text" id="kw" value="Hello Google"/><br>
+                    <label> </label>
+                </fieldset>
+            </form>
+            
+            <input type="submit" name="button" id="button1" onclick="acousticSearch()" value="Search" />
+        </div>
+        
+        
     </body>
 </html>
