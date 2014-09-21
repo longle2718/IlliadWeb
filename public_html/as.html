@@ -45,8 +45,8 @@ THE SOFTWARE.
             var audioCtx = new AudioContext();
             
             $(function(){
-                $("#textbox1").val(new Date().toISOString());
-                $("#textbox2").val(new Date().toISOString());
+                $("#t1").val(new Date().toISOString());
+                $("#t2").val(new Date().toISOString());
                 setInterval(function(){updateCurrTime();},1000);
             });
             
@@ -120,20 +120,31 @@ THE SOFTWARE.
                 oms.clearMarkers();
                 
                 var q = {
-                    time1: document.getElementById("textbox1").value,
-                    time2: document.getElementById("textbox2").value
+                    t1: document.getElementById("t1").value,
+                    t2: document.getElementById("t2").value
                 };
-                IllTimeQuery('publicDb', 'publicUser', 'publicPwd', q, function(file){
-                    for (var i = 0; i <file.length;i++){
-                        IllDownEvent('publicDb', 'publicUser', 'publicPwd', file[i].filename, function(event){
-                            // Create a marker for each event
-                            var marker = new google.maps.Marker({
-                                position:new google.maps.LatLng(parseFloat(event[0].location.latitute), parseFloat(event[0].location.longtitude)),
-                                desc:event[0].filename
-                            });
-                            marker.setMap(map);
-                            oms.addMarker(marker);
+                if (document.getElementById("f1").value){
+                    q.f1 = document.getElementById("f1").value;
+                }
+                if (document.getElementById("f2").value){
+                    q.f2 = document.getElementById("f2").value;
+                }
+                if (document.getElementById("lat").value && document.getElementById("lng").value){
+                    q.loc = [document.getElementById("lat").value, document.getElementById("lng").value];
+                }
+                if (document.getElementById("rad").value){
+                    q.rad = document.getElementById("rad").value;
+                }
+                
+                IllQuery('publicDb', 'publicUser', 'publicPwd', q, function(events){
+                    for (var i = 0; i <events.length;i++){
+                        // Create a marker for each event
+                        var marker = new google.maps.Marker({
+                            position:new google.maps.LatLng(parseFloat(events[i].location.coordinates[1]), parseFloat(events[i].location.coordinates[0])),
+                            desc:events[i].filename
                         });
+                        marker.setMap(map);
+                        oms.addMarker(marker);
                     }
                 });
                 //IllDownData('publicDb', 'publicUser', 'publicPwd', '20140903072620320.wav');
@@ -172,16 +183,16 @@ THE SOFTWARE.
             <form id="formTime">
                 <fieldset>
                     <legend id="time">Time</legend>
-                    <label class="label1">From</label> <input size="25" type="text" id="textbox1" value="2014-09-05T04:20:38.676Z"/><br>
-                    <label class="label1">To</label> <input size="25" type="text" id="textbox2" value="2014-09-05T04:25:38.676Z"/>
+                    <label class="label1">From</label> <input size="25" type="text" id="t1" value="2014-09-05T04:20:38.676Z"/><br>
+                    <label class="label1">To</label> <input size="25" type="text" id="t2" value="2014-09-05T04:25:38.676Z"/>
                 </fieldset>
             </form>
 
             <form id="formFreq">
                 <fieldset>
                     <legend id="freq">Frequency</legend>
-                    <label class="label1">Center frequency (Hz)</label> <input size="25" type="text" id="centFreq" value="2000"/><br>
-                    <label class="label1">Bandwidth (Hz)</label> <input size="25" type="text" id="bandwidth" value="2000"/>
+                    <label class="label1">Lower frequency (Hz)</label> <input size="25" type="text" id="f1" value="0"/><br>
+                    <label class="label1">Upper frequency (Hz)</label> <input size="25" type="text" id="f2" value="4000"/>
                 </fieldset>
             </form>
 
@@ -190,7 +201,7 @@ THE SOFTWARE.
                     <legend id="loc">Location</legend>
                     <label class="label1">Latitude</label> <input size="25" type="text" id="lat" value="40.1069855"/><br>
                     <label class="label1">Longitude</label> <input size="25" type="text" id="lng" value="-88.2244681"/><br>
-                    <label class="label1">Radius (km)</label> <input size="25" type="text" id="rad" value="1"/>
+                    <label class="label1">Radius (miles)</label> <input size="25" type="text" id="rad" value="1"/>
                 </fieldset>
             </form>
 

@@ -34,7 +34,7 @@ var IllDownData = function(db, user, pwd, filename, cb){
             withCredentials: true
         }
     }).success(function(data){
-        console.log(data.byteLength);
+        console.log('IllDownData ' + data.byteLength);
         cb(data);
     }).fail(function(){
         console.log('ajax fail');
@@ -55,6 +55,7 @@ var IllDownData = function(db, user, pwd, filename, cb){
 
 var IllDownEvent = function(db, user, pwd, filename, cb){
     var queryString = $.param({'dbname':db, 'colname':'event', 'user':user, 'passwd': pwd});
+    
     $.ajax({
         url: 'https://acoustic.ifp.uiuc.edu:8081/query?'+queryString,
         data: '{filename:"'+filename+'"}',
@@ -73,41 +74,48 @@ var IllDownEvent = function(db, user, pwd, filename, cb){
     });
 };
 
-var IllTimeQuery = function (db, user, pwd, varargin, cb){
-    var  request;
+var IllQuery = function (db, user, pwd, q, cb){
     //var tZoneOffset = 5/24;
     
-    if (Object.keys(varargin).length <= 1){
-        var queryString = $.param({'dbname':db, 'colname': 'data.files', 'user': user, 'passwd': pwd});
-        request = $.ajax({
-            url: 'https://acoustic.ifp.uiuc.edu:8081/query?'+queryString,
-            data: '{uploadDate:{$gte:{$date:"' + varargin.time1 + '"}}}',
-            type:'POST',
-            dataType: 'text',
-            timeOut: 10000
-        });
-    } else{
-        if (varargin.hasOwnProperty('limit')){
-            var queryString = $.param({'dbname':db, 'colname': 'data.files', 'user': user, 'passwd': pwd, 'limit':varargin.limit});
-            request = $.ajax({
-                url: 'https://acoustic.ifp.uiuc.edu:8081/query?'+queryString,
-                data: '{uploadDate:{$gte:{$date:"' + varargin.time1 + '"}}}',
-                type:'POST',
-                dataType: 'text',
-                timeOut: 10000
-            });
-        } else if(varargin.hasOwnProperty('time2')) {
-            var queryString = $.param({'dbname':db, 'colname': 'data.files', 'user': user, 'passwd': pwd});
-            request = $.ajax({
-                url: 'https://acoustic.ifp.uiuc.edu:8081/query?'+queryString,
-                data: '{uploadDate:{$gte:{$date:"' + varargin.time1 + '"}, $lte:{$date:"' + varargin.time2 + 'Z"}}}',
-                type:'POST',
-                dataType: 'text',
-                timeOut: 10000
-            });
-        }
+    // Construct the query string
+    var params = {'dbname':db, 'colname': 'event', 'user': user, 'passwd': pwd};
+    if (q.hasOwnProperty('limit')){
+        params.limit = q.limit;
     }
-    request.success(function(data){
+    var queryString = $.param(params);
+    
+    // Construct the query data to send
+    if (q.hasOwnProperty('t1') && q.hasOwnProperty('t2')){
+        timeDat = '{recordDate:{$gte:{$date:"'+ q.t1+'"}, $lte:{$date:"'+q.t2+'"}}}';
+    }
+    else if (q.hasOwnProperty('t1')){
+        timeDat = '{recordDate:{$gte:{$date:"'+ q.t1+'"}}}';
+    }
+    
+    if (q.hasOwnProperty('f1') && q.hasOwnProperty('f2')){
+        freqDat = ',{minFreq:{$gte:'+q.f1+'}},{maxFreq:{$lte:'+q.f2+'}}';
+    }
+    else if (q.hasOwnProperty('f1')){
+        freqDat = ',{minFreq:{$gte:'+q.f1+'}}';
+    }else{
+        freqDat = '';
+    }
+    
+    if (q.hasOwnProperty('loc') && q.hasOwnProperty('rad')){
+        locDat = ',{location:{$geoWithin:{$centerSphere:[['+q.loc[1]+','+q.loc[0]+'], '+q.rad+']}}}';
+    }else{
+        locDat = '';
+    }
+    
+    postDat = '{$and:['+timeDat+freqDat+locDat+']}';
+    
+    $.ajax({
+        url: 'https://acoustic.ifp.uiuc.edu:8081/query?'+queryString,
+        data: postDat,
+        type:'POST',
+        dataType: 'text',
+        timeOut: 10000
+    }).success(function(data){
         file = JSON.parse(data);
         cb(file);
     }).fail(function(){
