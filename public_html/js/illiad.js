@@ -107,6 +107,12 @@ var IllQuery = function (db, user, pwd, q, cb){
         locDat = '';
     }
     
+    if (q.hasOwnProperty('kw')){
+        kwDat = ',{transcript:'+q.kw+'}';
+    }else{
+        kwDat = '';
+    }
+    
     postDat = '{$and:['+timeDat+freqDat+locDat+']}';
     
     $.ajax({

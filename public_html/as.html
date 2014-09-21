@@ -135,6 +135,9 @@ THE SOFTWARE.
                 if (document.getElementById("rad").value){
                     q.rad = document.getElementById("rad").value;
                 }
+                if (document.getElementById("kw").value){
+                    q.kw = document.getElementById("kw").value;
+                }
                 
                 IllQuery('publicDb', 'publicUser', 'publicPwd', q, function(events){
                     for (var i = 0; i <events.length;i++){
@@ -208,7 +211,7 @@ THE SOFTWARE.
             <form id="formSpeech">
                 <fieldset>
                     <legend id="speech">Speech</legend>
-                    <label class="label1">Keywords</label> <input size="25" type="text" id="kw" value="Hello Google"/><br>
+                    <label class="label1">Keyword</label> <input size="25" type="text" id="kw" value=""/><br>
                     <label> </label>
                 </fieldset>
             </form>
