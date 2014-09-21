@@ -89,14 +89,14 @@ THE SOFTWARE.
                
                 var currTime = new Date().toISOString();
                 var q = {
-                    time1: lastTime,
-                    time2: currTime
+                    t1: lastTime,
+                    t2: currTime
                 };
                 
                 // clear old sound set
                 data.sounds = [];
                 
-                IllTimeQuery('publicDb', 'publicUser', 'publicPwd', q, function(file){
+                IllQuery('publicDb', 'publicUser', 'publicPwd', q, function(file){
                     console.log('forming new sound set');
                     for (var i = 0; i <file.length; i++){
                         lastTime = new Date(new Date(file[i].uploadDate.$date).valueOf()+1).toISOString();

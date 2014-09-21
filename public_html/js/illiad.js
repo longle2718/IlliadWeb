@@ -33,7 +33,7 @@ var IllDownData = function(db, user, pwd, filename, cb){
         xhrFields: {
             withCredentials: true
         }
-    }).success(function(data){
+    }).done(function(data){
         console.log('IllDownData ' + data.byteLength);
         cb(data);
     }).fail(function(){
@@ -65,7 +65,7 @@ var IllDownEvent = function(db, user, pwd, filename, cb){
         xhrFields: {
             withCredentials: true
         }
-    }).success(function(data){
+    }).done(function(data){
         var event = JSON.parse(data);
         console.log('IllDownEvent ' + event[0].filename);
         cb(event);
@@ -115,7 +115,7 @@ var IllQuery = function (db, user, pwd, q, cb){
         type:'POST',
         dataType: 'text',
         timeOut: 10000
-    }).success(function(data){
+    }).done(function(data){
         file = JSON.parse(data);
         cb(file);
     }).fail(function(){
