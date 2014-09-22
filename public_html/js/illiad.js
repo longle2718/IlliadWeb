@@ -132,6 +132,7 @@ var IllQuery = function (db, user, pwd, q, cb){
         kwDat = '';
     }
     
+    // FIX: memcached key is too long
     postDat = '{$and:['+timeDat+freqDat+locDat+kwDat+']}';
     
     $.ajax({
