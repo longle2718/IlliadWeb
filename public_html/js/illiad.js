@@ -74,6 +74,25 @@ var IllDownEvent = function(db, user, pwd, filename, cb){
     });
 };
 
+var IllUpdateField = function(db, user, pwd, filename, op, field){
+    var queryString = $.param({'dbname':db, 'colname':'event', 'user':user, 'passwd': pwd});
+    
+    $.ajax({
+        url: 'https://acoustic.ifp.uiuc.edu:8081/write?'+queryString,
+        data: '{filename:"'+filename+'"}\n{$'+op+':'+field+'}',
+        type:'POST',
+        dataType: 'text',
+        timeOut: 10000,
+        xhrFields: {
+            withCredentials: true
+        }
+    }).done(function(data){
+        console.log('IllUpdateField ' + data);
+    }).fail(function(){
+        console.log('ajax fail');
+    });
+};
+
 var IllQuery = function (db, user, pwd, q, cb){
     //var tZoneOffset = 5/24;
     
@@ -108,12 +127,12 @@ var IllQuery = function (db, user, pwd, q, cb){
     }
     
     if (q.hasOwnProperty('kw')){
-        kwDat = ',{transcript:'+q.kw+'}';
+        kwDat = ',{transcript:"'+q.kw+'"}';
     }else{
         kwDat = '';
     }
     
-    postDat = '{$and:['+timeDat+freqDat+locDat+']}';
+    postDat = '{$and:['+timeDat+freqDat+locDat+kwDat+']}';
     
     $.ajax({
         url: 'https://acoustic.ifp.uiuc.edu:8081/query?'+queryString,
