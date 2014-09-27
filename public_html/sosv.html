@@ -96,7 +96,7 @@ THE SOFTWARE.
                 // clear old sound set
                 data.sounds = [];
                 
-                IllQuery('publicDb', 'publicUser', 'publicPwd', q, function(file){
+                IllQueryEvent('publicDb', 'publicUser', 'publicPwd', q, function(file){
                     console.log('forming new sound set');
                     for (var i = 0; i <file.length; i++){
                         lastTime = new Date(new Date(file[i].uploadDate.$date).valueOf()+1).toISOString();

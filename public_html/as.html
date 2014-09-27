@@ -139,7 +139,7 @@ THE SOFTWARE.
                     q.kw = document.getElementById("kw").value;
                 }
                 
-                IllQuery('publicDb', 'publicUser', 'publicPwd', q, function(events){
+                IllQueryEvent('publicDb', 'publicUser', 'publicPwd', q, function(events){
                     for (var i = 0; i <events.length;i++){
                         // Create a marker for each event
                         var marker = new google.maps.Marker({

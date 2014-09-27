@@ -74,7 +74,7 @@ var IllDownEvent = function(db, user, pwd, filename, cb){
     });
 };
 
-var IllUpdateField = function(db, user, pwd, filename, op, field){
+var IllUpdateEvent = function(db, user, pwd, filename, op, field){
     var queryString = $.param({'dbname':db, 'colname':'event', 'user':user, 'passwd': pwd});
     
     $.ajax({
@@ -87,13 +87,13 @@ var IllUpdateField = function(db, user, pwd, filename, op, field){
             withCredentials: true
         }
     }).done(function(data){
-        console.log('IllUpdateField ' + data);
+        console.log('IllUpdateEvent ' + data);
     }).fail(function(){
         console.log('ajax fail');
     });
 };
 
-var IllQuery = function (db, user, pwd, q, cb){
+var IllQueryEvent = function (db, user, pwd, q, cb){
     //var tZoneOffset = 5/24;
     
     // Construct the query string
