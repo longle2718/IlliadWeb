@@ -129,7 +129,7 @@ var IllQueryEvent = function (db, user, pwd, q, cb_done, cb_fail){
     }
     
     if (q.hasOwnProperty('kw')){
-        kwDat = ',{transcript:"'+q.kw+'"}';
+        kwDat = ',{$text: {$search:"'+q.kw+'"}}';
     }else{
         kwDat = '';
     }
