@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-var IllDownData = function(db, user, pwd, filename, cb){
+var IllDownData = function(db, user, pwd, filename, cb_done, cb_fail){
     var queryString = $.param({'user':user, 'passwd': pwd, 'filename': filename});
     
     $.ajax({
@@ -35,9 +35,10 @@ var IllDownData = function(db, user, pwd, filename, cb){
         }
     }).done(function(data){
         console.log('IllDownData ' + data.byteLength);
-        cb(data);
+        cb_done(data);
     }).fail(function(){
         console.log('ajax fail');
+        cb_fail();
     });
     
     /*
@@ -53,7 +54,7 @@ var IllDownData = function(db, user, pwd, filename, cb){
     */
 };
 
-var IllDownEvent = function(db, user, pwd, filename, cb){
+var IllDownEvent = function(db, user, pwd, filename, cb_done, cb_fail){
     var queryString = $.param({'dbname':db, 'colname':'event', 'user':user, 'passwd': pwd});
     
     $.ajax({
@@ -68,9 +69,10 @@ var IllDownEvent = function(db, user, pwd, filename, cb){
     }).done(function(data){
         var event = JSON.parse(data);
         console.log('IllDownEvent ' + event[0].filename);
-        cb(event);
+        cb_done(event);
     }).fail(function(){
         console.log('ajax fail');
+        cb_fail();
     });
 };
 
@@ -93,7 +95,7 @@ var IllUpdateEvent = function(db, user, pwd, filename, op, field){
     });
 };
 
-var IllQueryEvent = function (db, user, pwd, q, cb){
+var IllQueryEvent = function (db, user, pwd, q, cb_done, cb_fail){
     //var tZoneOffset = 5/24;
     
     // Construct the query string
@@ -143,8 +145,9 @@ var IllQueryEvent = function (db, user, pwd, q, cb){
         timeOut: 10000
     }).done(function(data){
         file = JSON.parse(data);
-        cb(file);
+        cb_done(file);
     }).fail(function(){
         console.log('ajax fail');
+        cb_fail();
     });
 };
