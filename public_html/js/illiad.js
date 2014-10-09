@@ -112,14 +112,45 @@ var IllQueryEvent = function (db, user, pwd, q, cb_done, cb_fail){
     else if (q.hasOwnProperty('t1')){
         timeDat = '{recordDate:{$gte:{$date:"'+ q.t1+'"}}}';
     }
+    else if (q.hasOwnProperty('t2')){
+        timeDat = '{recordDate:{$lte:{$date:"'+ q.t2+'"}}}';
+    }
     
     if (q.hasOwnProperty('f1') && q.hasOwnProperty('f2')){
         freqDat = ',{minFreq:{$gte:'+q.f1+'}},{maxFreq:{$lte:'+q.f2+'}}';
     }
     else if (q.hasOwnProperty('f1')){
         freqDat = ',{minFreq:{$gte:'+q.f1+'}}';
+    }else if (q.hasOwnProperty('f2')){
+        freqDat = ',{maxFreq:{$lte:'+q.f2+'}}';
     }else{
         freqDat = '';
+    }
+    
+    if (q.hasOwnProperty('dur1') && q.hasOwnProperty('dur2')){
+        durDat = ',{duration:{$gte:'+q.dur1+', $lte:'+q.dur2+'}}';
+    }
+    else if (q.hasOwnProperty('dur1')){
+        durDat = ',{duration:{$gte:'+q.dur1+'}}';
+    }
+    else if (q.hasOwnProperty('dur2')){
+        durDat = ',{duration:{$lte:'+q.dur2+'}}';
+    }
+    else{
+        durDat = '';
+    }
+    
+    if (q.hasOwnProperty('lnp1') && q.hasOwnProperty('lnp2')){
+        lnpDat = ',{logNoiseProb:{$gte:'+q.lnp1+', $lte:'+q.lnp2+'}}';
+    }
+    else if (q.hasOwnProperty('lnp1')){
+        lnpDat = ',{logNoiseProb:{$gte:'+q.lnp1+'}}';
+    }
+    else if (q.hasOwnProperty('lnp2')){
+        lnpDat = ',{logNoiseProb:{$lte:'+q.lnp2+'}}';
+    }
+    else{
+        lnpDat = '';
     }
     
     if (q.hasOwnProperty('loc') && q.hasOwnProperty('rad')){
@@ -135,7 +166,7 @@ var IllQueryEvent = function (db, user, pwd, q, cb_done, cb_fail){
     }
     
     // FIX: memcached key is too long
-    postDat = '{$and:['+timeDat+freqDat+locDat+kwDat+']}';
+    postDat = '{$and:['+timeDat+freqDat+durDat+lnpDat+locDat+kwDat+']}';
     
     $.ajax({
         url: 'https://acoustic.ifp.uiuc.edu:8081/query?'+queryString,
