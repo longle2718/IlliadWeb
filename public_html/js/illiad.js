@@ -26,7 +26,7 @@ var IllDownData = function(db, user, pwd, filename, cb_done, cb_fail){
     var queryString = $.param({'user':user, 'passwd': pwd, 'filename': filename});
     
     $.ajax({
-        url: 'https://acoustic.ifp.uiuc.edu:8081/gridfs/'+db+'/data?'+queryString,
+        url: 'https://acoustic.ifp.illinois.edu:8081/gridfs/'+db+'/data?'+queryString,
         type:'GET',
         dataType :'arraybuffer',
         timeOut: 10000,
@@ -43,7 +43,7 @@ var IllDownData = function(db, user, pwd, filename, cb_done, cb_fail){
     
     /*
     var request = new XMLHttpRequest();
-    request.open('GET', 'https://acoustic.ifp.uiuc.edu:8081/gridfs/'+db+'/data?'+queryString, true);
+    request.open('GET', 'https://acoustic.ifp.illinois.edu:8081/gridfs/'+db+'/data?'+queryString, true);
     request.responseType = 'arraybuffer';
     request.onload = function() {
         var data = request.response;
@@ -58,7 +58,7 @@ var IllDownEvent = function(db, user, pwd, filename, cb_done, cb_fail){
     var queryString = $.param({'dbname':db, 'colname':'event', 'user':user, 'passwd': pwd});
     
     $.ajax({
-        url: 'https://acoustic.ifp.uiuc.edu:8081/query?'+queryString,
+        url: 'https://acoustic.ifp.illinois.edu:8081/query?'+queryString,
         data: '{filename:"'+filename+'"}',
         type:'POST',
         dataType: 'text',
@@ -80,7 +80,7 @@ var IllUpdateEvent = function(db, user, pwd, filename, op, field){
     var queryString = $.param({'dbname':db, 'colname':'event', 'user':user, 'passwd': pwd});
     
     $.ajax({
-        url: 'https://acoustic.ifp.uiuc.edu:8081/write?'+queryString,
+        url: 'https://acoustic.ifp.illinois.edu:8081/write?'+queryString,
         data: '{filename:"'+filename+'"}\n{$'+op+':'+field+'}',
         type:'POST',
         dataType: 'text',
@@ -170,7 +170,7 @@ var IllQueryEvent = function (db, user, pwd, q, cb_done, cb_fail){
     postDat = '{$and:['+timeDat+freqDat+durDat+lnpDat+locDat+kwDat+']}';
     
     $.ajax({
-        url: 'https://acoustic.ifp.uiuc.edu:8081/query?'+queryString,
+        url: 'https://acoustic.ifp.illinois.edu:8081/query?'+queryString,
         data: postDat,
         type:'POST',
         dataType: 'text',
