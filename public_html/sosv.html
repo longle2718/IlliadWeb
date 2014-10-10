@@ -36,7 +36,7 @@ THE SOFTWARE.
         <script src="js/illiad.min.js"></script>
 
         <script>
-            window.open("https://acoustic.ifp.uiuc.edu:8081");
+            window.open("https://acoustic.ifp.illinois.edu:8081");
 
             var lastTime = new Date().toISOString();
             var data = {
@@ -108,7 +108,7 @@ THE SOFTWARE.
                                 name: event[0].filename,
                                 lat: event[0].location.latitute,
                                 lng: event[0].location.longtitude,
-                                src: ['https://acoustic.ifp.uiuc.edu:8081/gridfs/'+'publicDb'+'/data?'+queryString],
+                                src: ['https://acoustic.ifp.illinois.edu:8081/gridfs/'+'publicDb'+'/data?'+queryString],
                                 pause: "1",
                                 db: "100"
                             };
