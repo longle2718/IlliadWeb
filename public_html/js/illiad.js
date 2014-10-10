@@ -97,6 +97,7 @@ var IllUpdateEvent = function(db, user, pwd, filename, op, field){
 
 var IllQueryEvent = function (db, user, pwd, q, cb_done, cb_fail){
     //var tZoneOffset = 5/24;
+    var earthRad = 3959; // miles
     
     // Construct the query string
     var params = {'dbname':db, 'colname': 'event', 'user': user, 'passwd': pwd};
@@ -154,7 +155,7 @@ var IllQueryEvent = function (db, user, pwd, q, cb_done, cb_fail){
     }
     
     if (q.hasOwnProperty('loc') && q.hasOwnProperty('rad')){
-        locDat = ',{location:{$geoWithin:{$centerSphere:[['+q.loc[1]+','+q.loc[0]+'], '+q.rad+']}}}';
+        locDat = ',{location:{$geoWithin:{$centerSphere:[['+q.loc[1]+','+q.loc[0]+'], '+q.rad/earthRad+']}}}';
     }else{
         locDat = '';
     }
