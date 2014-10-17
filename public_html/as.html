@@ -59,9 +59,9 @@ THE SOFTWARE.
                 map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
                 oms=new OverlappingMarkerSpiderfier(map);
                 
-                oms.addListener('click', function(marker, event) {
+                oms.addListener('click', function(marker) {
                     // Download sound data and play
-                    IllDownData('publicDb', 'publicUser', 'publicPwd', marker.desc, function(data){
+                    IllDownData('publicDb', 'publicUser', 'publicPwd', marker.filename, function(data){
                         audioCtx.decodeAudioData(data, function(buf){
                             var source = audioCtx.createBufferSource();
                             source.buffer = buf;
@@ -73,35 +73,10 @@ THE SOFTWARE.
                     });
                 });
                 oms.addListener('spiderfy', function(markers) {
-                    for (var i = 0; i <markers.length;i++){
-                        // Using function closure. () is to evaluate function immediately instead of 
-                        // just a function pointer.
-                        google.maps.event.addListener(markers[i], 'mouseover', (function(marker) {
-                            return function(){
-                                iw.setContent(marker.desc);
-                                iw.open(map, marker);
-                            };
-                        })(markers[i]));
-                        /*
-                        (function(marker){
-                            google.maps.event.addListener(marker, 'mouseover', function(){
-                                iw.setContent(marker.desc);
-                                iw.open(map, marker);
-                            });
-                        })(markers[i]);
-                        */
-                        
-                        google.maps.event.addListener(markers[i], 'mouseout', function(){
-                            iw.close();
-                        });
-                    }
+
                 });
                 oms.addListener('unspiderfy', function(markers) {
-                    iw.close();
-                    for (var i = 0; i <markers.length;i++){
-                        google.maps.event.clearListeners(markers[i], 'mouseover');
-                        google.maps.event.clearListeners(markers[i], 'mouseout');
-                    }
+                    
                 });
             }
             google.maps.event.addDomListener(window, 'load', initialize); 
@@ -156,9 +131,20 @@ THE SOFTWARE.
                         // Create a marker for each event
                         var marker = new google.maps.Marker({
                             position:new google.maps.LatLng(parseFloat(events[i].location.coordinates[1]), parseFloat(events[i].location.coordinates[0])),
-                            desc:events[i].filename
+                            desc:"recordDate:"+events[i].recordDate.$date+"\n"+"duration:"+events[i].duration+"\n"+"logNoiseProb:"+events[i].logNoiseProb,
+                            filename:events[i].filename
                         });
                         marker.setMap(map);
+                        
+                        google.maps.event.addListener(marker, 'mouseover', (function(marker) {
+                            return function(){
+                                iw.setContent(marker.desc);
+                                iw.open(map, marker);
+                            };
+                        })(marker));
+                        google.maps.event.addListener(marker, 'mouseout', function(){
+                            iw.close();
+                        });
                         oms.addMarker(marker);
                     }
                 }, function(){
