@@ -23,54 +23,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
 <html>
-    <title>Word Cloud</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <head>
+        <title>Word Cloud</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="css/cloud.css" rel="stylesheet">
-
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script src="js/d3.layout.cloud.js"></script>
-    <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script src="js/wordcloud2.js"></script>
+        <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
     
-    <body>
         <script>
-            var fill = d3.scale.category20();
-            var w = 960,
-                h = 600;
             var lastTime = new Date().toISOString();
-            var wordList = ["Hello", "world","Hello", "world","Hello", "world"];
+            var wordList = ["Hello", "world", "Hello", "world", "Hello", "world"];
 
-            var layout = d3.layout.cloud().size([w, h])
-                .timeInterval(10)
-                .words(unique(wordList))
-                .padding(5)
-                .rotate(function() { return ~~(Math.random() * 2) * 90; })
-                .font("Impact")
-                .fontSize(function(d) { return d.size; })
-                .on("end", draw)
-                .start();
-        
-            function draw(words) {
-                d3.select("body").append("svg")
-                    .attr("width", w)
-                    .attr("height", h)
-                .append("g")
-                    .attr("transform", "translate(150,150)")
-                .selectAll("text")
-                    .data(words)
-                .enter().append("text")
-                    .style("font-size", function(d) { return d.size + "px"; })
-                    .style("font-family", "Impact")
-                    .style("fill", function(d, i) { return fill(i); })
-                    .attr("text-anchor", "middle")
-                    .attr("transform", function(d) {
-                      return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
-                    })
-                    .text(function(d) { return d.text; });
-            }
-            
             $(function(){
+                WordCloud(document.getElementById('myCanvas'), { list: unique(wordList) } );
                 setInterval(updateData,10000);
             });
             
@@ -116,7 +82,7 @@ THE SOFTWARE.
                         }
                         console.log(events[i].transcript);
                     }
-                    layout.words(unique(wordList)).start();
+                    WordCloud(document.getElementById('myCanvas'), { list: unique(wordList) } );
                 }).fail(function(){
                     console.log('ajax fail');
                     console.log("No event found!");
@@ -138,9 +104,14 @@ THE SOFTWARE.
                 }
                 
                 return a.map(function(d, i){
-                    return {text: d, size: 10+b[i]*10};
+                    return [d, 10+10*b[i]];
                 });
             }
         </script>
+    </head>
+    
+    <body>
+        <canvas id="myCanvas" width="960" height="600" style="border:1px solid #000000;">
+        </canvas>
     </body>
 </html>
