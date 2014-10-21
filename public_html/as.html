@@ -47,7 +47,10 @@ THE SOFTWARE.
             $(function(){
                 $("#t1").val(new Date().toISOString());
                 $("#t2").val(new Date().toISOString());
-                setInterval(function(){updateCurrTime();},1000);
+                setInterval(function(){
+                    var d = new Date();
+                    document.getElementById('time').innerHTML = 'Time '+d.toISOString();
+                },1000);
             });
             
             function initialize(){
@@ -127,12 +130,16 @@ THE SOFTWARE.
                 }
                 
                 IllQueryEvent('publicDb', 'publicUser', 'publicPwd', q, function(events){
+                    events.sort(function(a, b) {
+                        return a.logNoiseProb - b.logNoiseProb;
+                    });
                     for (var i = 0; i <events.length;i++){
                         // Create a marker for each event
                         var marker = new google.maps.Marker({
                             position:new google.maps.LatLng(parseFloat(events[i].location.coordinates[1]), parseFloat(events[i].location.coordinates[0])),
-                            desc:"recordDate:"+events[i].recordDate.$date+"\n"+"duration:"+events[i].duration+"\n"+"logNoiseProb:"+events[i].logNoiseProb,
-                            filename:events[i].filename
+                            desc:"logNoiseProb:"+events[i].logNoiseProb+" recordDate:"+events[i].recordDate.$date+"\n"+"duration:"+events[i].duration,
+                            filename:events[i].filename,
+                            icon:'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld='+ (i) +'|FF776B|000000'
                         });
                         marker.setMap(map);
                         
@@ -153,11 +160,7 @@ THE SOFTWARE.
                 //IllDownData('publicDb', 'publicUser', 'publicPwd', '20140903072620320.wav');
                 //IllDownEvent('publicDb', 'publicUser', 'publicPwd', '20140903072620320.wav');
             }
-       
-            function updateCurrTime() {
-                var d = new Date();
-                document.getElementById('time').innerHTML = 'Time '+d.toISOString();
-            }
+            
         </script>
         <!-- Basic CSS -->
         <style>
