@@ -80,6 +80,7 @@ THE SOFTWARE.
                 }).done(function(data){
                     var events = JSON.parse(data);
                     for (var i = 0; i <events.length;i++){
+                        lastTime = new Date(new Date(events[i].recordDate.$date).valueOf()+1).toISOString();
                         wordList.push(events[i]);
                     }
                     layout.words(unique(wordList)).start();

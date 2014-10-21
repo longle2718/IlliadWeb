@@ -102,7 +102,7 @@ THE SOFTWARE.
                 IllQueryEvent('publicDb', 'publicUser', 'publicPwd', q, function(events){
                     console.log('forming new sound set');
                     for (var i = 0; i <events.length; i++){
-                        lastTime = new Date(new Date(events[i].uploadDate.$date).valueOf()+1).toISOString();
+                        lastTime = new Date(new Date(events[i].recordDate.$date).valueOf()+1).toISOString();
                         
                         // construct a sound object
                         var queryString = $.param({'user':'publicUser', 'passwd': 'publicPwd', 'filename': events[i].filename});
