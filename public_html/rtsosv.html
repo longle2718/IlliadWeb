@@ -66,7 +66,7 @@ THE SOFTWARE.
             
             $(function(){
                 sosv = new SOSV(data);
-                var myTimer=setInterval(function(){updateData();},10000);
+                setInterval(updateData,10000);
             });
             
             function updateData(){
@@ -77,7 +77,6 @@ THE SOFTWARE.
                 sosv.markers = [];
                 sosv.arrSounds = [];
                 sosv.soundCount = 0;
-
                 // Load new data into SOSV structure
                 sosv.soundCount = data.sounds.length;
                 sosv.loadSounds(data);
@@ -100,26 +99,24 @@ THE SOFTWARE.
                 // clear old sound set
                 data.sounds = [];
                 
-                IllQueryEvent('publicDb', 'publicUser', 'publicPwd', q, function(file){
+                IllQueryEvent('publicDb', 'publicUser', 'publicPwd', q, function(events){
                     console.log('forming new sound set');
-                    for (var i = 0; i <file.length; i++){
-                        lastTime = new Date(new Date(file[i].uploadDate.$date).valueOf()+1).toISOString();
+                    for (var i = 0; i <events.length; i++){
+                        lastTime = new Date(new Date(events[i].uploadDate.$date).valueOf()+1).toISOString();
                         
-                        IllDownEvent('publicDb', 'publicUser', 'publicPwd', file[i].filename, function(event){
-                            // construct a sound object
-                            var queryString = $.param({'user':'publicUser', 'passwd': 'publicPwd', 'filename': event[0].filename});
-                            var sound = {
-                                name: event[0].filename,
-                                lat: event[0].location.latitute,
-                                lng: event[0].location.longtitude,
-                                src: ['https://acoustic.ifp.illinois.edu:8081/gridfs/'+'publicDb'+'/data?'+queryString],
-                                pause: "1",
-                                db: "100"
-                            };
-                            data.sounds.push(sound);
-                            console.log('sound.src '+sound.src);
-                            console.log('sound.lat '+sound.lat+', sound.lng '+sound.lng);
-                        });
+                        // construct a sound object
+                        var queryString = $.param({'user':'publicUser', 'passwd': 'publicPwd', 'filename': events[i].filename});
+                        var sound = {
+                            name: events[i].filename,
+                            lat: events[i].location.coordinates(2),
+                            lng: events[i].location.coordinates(1),
+                            src: ['https://acoustic.ifp.illinois.edu:8081/gridfs/'+'publicDb'+'/data?'+queryString],
+                            pause: "1",
+                            db: "100"
+                        };
+                        data.sounds.push(sound);
+                        console.log('sound.src '+sound.src);
+                        console.log('sound.lat '+sound.lat+', sound.lng '+sound.lng);
                     }
                 }, function(){
                     console.log("No event found!");

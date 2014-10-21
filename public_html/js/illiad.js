@@ -105,6 +105,7 @@ var IllQueryEvent = function (db, user, pwd, q, cb_done, cb_fail){
         params.limit = q.limit;
     }
     var queryString = $.param(params);
+    var timeDat, freqDat, durDat, lnpDat, locDat, kwDat;
     
     // Construct the query data to send
     if (q.hasOwnProperty('t1') && q.hasOwnProperty('t2')){
@@ -167,7 +168,7 @@ var IllQueryEvent = function (db, user, pwd, q, cb_done, cb_fail){
     }
     
     // FIX: memcached key is too long
-    postDat = '{$and:['+timeDat+freqDat+durDat+lnpDat+locDat+kwDat+']}';
+    var postDat = '{$and:['+timeDat+freqDat+durDat+lnpDat+locDat+kwDat+']}';
     
     $.ajax({
         url: 'https://acoustic.ifp.illinois.edu:8081/query?'+queryString,
@@ -176,8 +177,8 @@ var IllQueryEvent = function (db, user, pwd, q, cb_done, cb_fail){
         dataType: 'text',
         timeOut: 10000
     }).done(function(data){
-        file = JSON.parse(data);
-        cb_done(file);
+        var events = JSON.parse(data);
+        cb_done(events);
     }).fail(function(){
         console.log('ajax fail');
         cb_fail();
