@@ -33,12 +33,21 @@ THE SOFTWARE.
     
         <script>
             var lastTime = new Date().toISOString();
-            var wordList = ["Hello", "world", "Hello", "world", "Hello", "world"];
+            var wordList;
+            var gLoc;
+            var gRad;
 
             $(function(){
-                WordCloud(document.getElementById('myCanvas'), { list: unique(wordList) } );
+                init();
                 setInterval(updateData,10000);
             });
+            
+            function init(){
+                wordList = ["Hello", "world"];
+                WordCloud(document.getElementById('myCanvas'), { list: unique(wordList) } );
+                gLoc = [$('#lat').val(), $('#lng').val()];
+                gRad = $('#rad').val();
+            }
             
             function updateData(){
                 var currTime = new Date().toISOString();
@@ -46,8 +55,8 @@ THE SOFTWARE.
                     t1: lastTime,
                     t2: currTime
                 };
-                q.loc = [40.109789,-88.227261];
-                q.rad = 0.5;
+                q.loc = gLoc;
+                q.rad = gRad;
                 
                 // Manual query for existence of the keyword field
                 var DB = 'publicDb', USER='publicUser', PWD='publicPwd';
@@ -108,10 +117,39 @@ THE SOFTWARE.
                 });
             }
         </script>
+        
+        <style>
+            #myCanvas {
+                width: 80%;
+                height: 90%;
+                position: absolute;
+                background: #000;
+            }
+            #forms{
+                position: absolute;
+                right: 0%;
+            }
+            #button1{
+                font-size: large;
+            }
+        </style>
     </head>
     
     <body>
-        <canvas id="myCanvas" width="960" height="600" style="border:1px solid #000000;">
+        <canvas id="myCanvas" style="border:1px solid #000000;">
         </canvas>
+        
+        <div id="forms">
+            <form id="formLoc">
+                <fieldset>
+                    <legend id="loc">Location</legend>
+                    <label class="label1">Latitude</label> <input size="25" type="text" id="lat" value="40.109789"/><br>
+                    <label class="label1">Longitude</label> <input size="25" type="text" id="lng" value="-88.227261"/><br>
+                    <label class="label1">Radius (miles)</label> <input size="25" type="text" id="rad" value="0.5"/>
+                </fieldset>
+            </form>
+            
+            <input type="submit" name="button" id="button1" onclick="init()" value="Start" />
+        </div>
     </body>
 </html>

@@ -39,35 +39,44 @@ THE SOFTWARE.
             //window.open("https://acoustic.ifp.illinois.edu:8081");
 
             var lastTime = new Date().toISOString();
-            var data = {
-                id: "pano",
-    
-                lat: "40.114121",
-                lng: "-88.2229818",
-                heading: "60",
-                pitch: "1",
-
-                sounds: [
-                    {
-                        /*
-                        "name": "accordion",
-                        "lat": "40.114121",
-                        "lng": "-88.2229818",
-                        "src": [
-                            "audio/accordian.mp3"
-                        ],
-                        "db": "100",
-                        "pause": "0"
-                        */
-                    }
-                ]
-            };
-            var sosv = null;
+            var gLoc;
+            var gRad;
+            var data;
+            var sosv;
             
             $(function(){
-                sosv = new SOSV(data);
+                init();
                 setInterval(updateData,10000);
             });
+            
+            function init(){
+                gLoc = [$('#lat').val(), $('#lng').val()];
+                gRad = $('#rad').val();
+                data = {
+                    id: "pano",
+
+                    lat: gLoc[0],
+                    lng: gLoc[1],
+                    heading: "60",
+                    pitch: "1",
+
+                    sounds: [
+                        {
+                            /*
+                            "name": "accordion",
+                            "lat": "40.114121",
+                            "lng": "-88.2229818",
+                            "src": [
+                                "audio/accordian.mp3"
+                            ],
+                            "db": "100",
+                            "pause": "0"
+                            */
+                        }
+                    ]
+                };
+                sosv = new SOSV(data);
+            }
             
             function updateData(){
                 console.log('Reload SOSV sound set');
@@ -93,8 +102,8 @@ THE SOFTWARE.
                 };
                 q.dur1 = 0.5;
                 q.lnp2 = -500;
-                q.loc = [40.109789,-88.227261];
-                q.rad = 0.5;
+                q.loc = gLoc;
+                q.rad = gRad;
                 
                 // clear old sound set
                 data.sounds = [];
@@ -108,8 +117,8 @@ THE SOFTWARE.
                         var queryString = $.param({'user':'publicUser', 'passwd': 'publicPwd', 'filename': events[i].filename});
                         var sound = {
                             name: events[i].filename,
-                            lat: events[i].location.coordinates(2),
-                            lng: events[i].location.coordinates(1),
+                            lat: events[i].location.coordinates[1],
+                            lng: events[i].location.coordinates[0],
                             src: ['https://acoustic.ifp.illinois.edu:8081/gridfs/'+'publicDb'+'/data?'+queryString],
                             pause: "1",
                             db: "100"
@@ -131,7 +140,7 @@ THE SOFTWARE.
                 padding: 0;
             }
             #pano {
-                width: 100%;
+                width: 80%;
                 height: 100%;
                 position: absolute;
                 background: #000;
@@ -141,11 +150,32 @@ THE SOFTWARE.
                 bottom: 10px;
                 right: 20px;
             }
+            #forms{
+                position: absolute;
+                right: 0%;
+            }
+            #button1{
+                font-size: large;
+            }
         </style>
     </head>
     
     <body>
         <div id="pano"></div>
+        
+        <div id="forms">
+            <form id="formLoc">
+                <fieldset>
+                    <legend id="loc">Location</legend>
+                    <label class="label1">Latitude</label> <input size="25" type="text" id="lat" value="40.109789"/><br>
+                    <label class="label1">Longitude</label> <input size="25" type="text" id="lng" value="-88.227261"/><br>
+                    <label class="label1">Radius (miles)</label> <input size="25" type="text" id="rad" value="0.1"/>
+                </fieldset>
+            </form>
+            
+            <input type="submit" name="button" id="button1" onclick="init()" value="Start" />
+        </div>
+        
         <p class="amplifon">Powered by <a href="http://amplifon.co.uk/sounds-of-street-view/">Sounds of Street View</a> by <a href="http://amplifon.co.uk">Amplifon</a></p>
     </body>
 </html>
