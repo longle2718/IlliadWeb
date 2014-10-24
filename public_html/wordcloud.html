@@ -30,23 +30,69 @@ THE SOFTWARE.
 
         <script src="js/wordcloud2.js"></script>
         <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
-    
+        <script 
+            src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD5NvcrQ54Rbzdxpo3FtJsAyvUjy6O3cn4&sensor=false">
+        </script>
+                
         <script>
+            var map;
+            var circle;
             var lastTime = new Date().toISOString();
             var wordList;
             var gLoc;
             var gRad;
 
             $(function(){
-                init();
+                reset();
+
+                map=new google.maps.Map(document.getElementById("googleMap"),{
+                    center:new google.maps.LatLng(gLoc[0], gLoc[1]),
+                    zoom:15,
+                    mapTypeId:google.maps.MapTypeId.ROADMAP
+                });
+                
+                circle = new google.maps.Circle({
+                    strokeColor: '#FF0000',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#FF0000',
+                    fillOpacity: 0.35,
+                    map: map,
+                    draggable: true,
+                    center: new google.maps.LatLng(gLoc[0], gLoc[1]),
+                    radius: gRad*1609.34 // 1 mile = 1609.34 meters
+                });
+                
+                google.maps.event.addListener(circle, "dragend", function(evt) {
+                    $('#lat').val(evt.latLng.lat().toFixed(5));
+                    $('#lng').val(evt.latLng.lng().toFixed(5));
+                    reset();
+                });
+                
+                $("#lat").change(function(){
+                    circle.setCenter(new google.maps.LatLng($("#lat").val(), $("#lng").val()));
+                    reset();
+                });
+
+                 $("#lng").change(function(){
+                    circle.setCenter(new google.maps.LatLng($("#lat").val(), $("#lng").val()));
+                    reset();
+                });
+
+                 $("#rad").change(function(){
+                    circle.setRadius($("#rad").val()*1609.34);
+                    reset();
+                });
+                
                 setInterval(updateData,10000);
             });
             
-            function init(){
-                wordList = ["Hello", "world"];
-                WordCloud(document.getElementById('myCanvas'), { list: unique(wordList) } );
+            function reset(){
                 gLoc = [$('#lat').val(), $('#lng').val()];
                 gRad = $('#rad').val();
+
+                wordList = ["Hello", "world"];
+                WordCloud(document.getElementById('myCanvas'), { list: unique(wordList) } );
             }
             
             function updateData(){
@@ -57,6 +103,7 @@ THE SOFTWARE.
                 };
                 q.loc = gLoc;
                 q.rad = gRad;
+                console.log("loc: "+q.loc[0]+" "+q.loc[1]+", rad: "+q.rad);
                 
                 // Manual query for existence of the keyword field
                 var DB = 'publicDb', USER='publicUser', PWD='publicPwd';
@@ -120,14 +167,16 @@ THE SOFTWARE.
         
         <style>
             #myCanvas {
-                width: 80%;
-                height: 90%;
+                width: 75%;
+                height: 100%;
                 position: absolute;
                 background: #000;
+                border: 1px solid #000000;
             }
             #forms{
                 position: absolute;
-                right: 0%;
+                right: 1%;
+                width: 20%;
             }
             #button1{
                 font-size: large;
@@ -136,20 +185,19 @@ THE SOFTWARE.
     </head>
     
     <body>
-        <canvas id="myCanvas" style="border:1px solid #000000;">
-        </canvas>
+        <canvas id="myCanvas"></canvas>
         
         <div id="forms">
+            <div align="center" id="googleMap" style="width: 100%; height: 400px"></div>
+            
             <form id="formLoc">
                 <fieldset>
                     <legend id="loc">Location</legend>
                     <label class="label1">Latitude</label> <input size="25" type="text" id="lat" value="40.109789"/><br>
                     <label class="label1">Longitude</label> <input size="25" type="text" id="lng" value="-88.227261"/><br>
-                    <label class="label1">Radius (miles)</label> <input size="25" type="text" id="rad" value="0.5"/>
+                    <label class="label1">Radius (miles)</label> <input size="25" type="text" id="rad" value="0.1"/>
                 </fieldset>
             </form>
-            
-            <input type="submit" name="button" id="button1" onclick="init()" value="Start" />
         </div>
     </body>
 </html>
