@@ -276,11 +276,9 @@ var SOSV = function(data){
 		self.loadSounds(data);
 
 		// Manually trigger onSoundLoaded if there are no sounds in the json data
-                /*
 		if (!self.soundCount) {
 			self.onSoundLoaded(null);
 		}
-                */
 	};
 
 	this.createStreetView = function(data){
@@ -366,6 +364,7 @@ var SOSV = function(data){
 		for (var i=0; i < self.arrSounds.length; i++) {
 			self.arrSounds[i].unloadSound();
 		}
+                self.arrSounds = [];
 	};
 
 	this.showUserData = function(e, pano){

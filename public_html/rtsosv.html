@@ -40,6 +40,7 @@ THE SOFTWARE.
             var map;
             var circle;
             var timerId;
+            var soundQueue = [];
             var lastTime = new Date().toISOString();
             var data;
             var sosv;
@@ -111,11 +112,15 @@ THE SOFTWARE.
             function updateData(){                    
                 // clear SOSV structure
                 sosv.unloadSounds();
-                sosv.markers = [];
-                sosv.arrSounds = [];
                 sosv.soundCount = 0;
-               // Load new data into SOSV structure
-                sosv.soundCount = data.sounds.length;
+                // Load new data into SOSV structure
+                if (soundQueue.length === 0){
+                    sosv.soundCount = 0;
+                    data.sounds = [{}];
+                } else{
+                    sosv.soundCount = 1;
+                    data.sounds = [soundQueue.shift()];
+                }                
                 sosv.loadSounds(data);
                 
                 var currTime = new Date().toISOString();
@@ -123,14 +128,11 @@ THE SOFTWARE.
                     t1: lastTime,
                     t2: currTime
                 };
-                q.dur1 = 0.5;
+                q.dur1 = 0.3;
                 q.lnp2 = -500;
                 q.loc = gLoc;
                 q.rad = gRad;
                 console.log("loc: "+q.loc[0]+" "+q.loc[1]+", rad: "+q.rad);
-                
-                // clear old sound set
-                data.sounds = [];
                 
                 IllQueryEvent('publicDb', 'publicUser', 'publicPwd', q, function(events){
                     console.log('forming new sound set');
@@ -147,7 +149,7 @@ THE SOFTWARE.
                             pause: "1",
                             db: "100"
                         };
-                        data.sounds.push(sound);
+                        soundQueue.push(sound);
                         console.log('sound.src '+sound.src);
                         console.log('sound.lat '+sound.lat+', sound.lng '+sound.lng);
                     }

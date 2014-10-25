@@ -45,8 +45,11 @@ THE SOFTWARE.
             var audioCtx = new AudioContext();
             
             $(function(){
-                $("#t1").val(new Date().toISOString());
-                $("#t2").val(new Date().toISOString());
+                var currDate = new Date();
+                var prevDate = new Date(currDate);
+                prevDate.setDate(prevDate.getDate()-1);
+                $("#t1").val(prevDate.toISOString());
+                $("#t2").val(currDate.toISOString());
                 setInterval(function(){
                     var d = new Date();
                     document.getElementById('time').innerHTML = 'Time '+d.toISOString();
