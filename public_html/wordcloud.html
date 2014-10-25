@@ -91,6 +91,7 @@ THE SOFTWARE.
             });
             
             function reset(){
+                lastTime = new Date().toISOString();
                 gLoc = [$('#lat').val(), $('#lng').val()];
                 gRad = $('#rad').val();
 

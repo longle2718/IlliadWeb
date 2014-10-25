@@ -92,6 +92,7 @@ THE SOFTWARE.
             });
             
             function reset(){
+                lastTime = new Date().toISOString();
                 clearInterval(timerId);
                 soundQueue = [];
                 playing = false;
