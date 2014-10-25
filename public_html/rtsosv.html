@@ -39,9 +39,10 @@ THE SOFTWARE.
             //window.open("https://acoustic.ifp.illinois.edu:8081");
             var map;
             var circle;
+            var lastTime = new Date().toISOString();
             var timerId;
             var soundQueue = [];
-            var lastTime = new Date().toISOString();
+            var playing = false;
             var data;
             var sosv;
             var gLoc;
@@ -92,43 +93,44 @@ THE SOFTWARE.
             
             function reset(){
                 clearInterval(timerId);
+                soundQueue = [];
+                playing = false;
                 
                 gLoc = [$('#lat').val(), $('#lng').val()];
                 gRad = $('#rad').val();
-                
                 data = {
                     id: "pano",
                     lat: gLoc[0],
                     lng: gLoc[1],
                     heading: "60",
                     pitch: "1",
-                    sounds: [{}]
+                    sounds: []
                 };
                 sosv = new SOSV(data);
                 
                 timerId = setInterval(updateData,2000);
             }
             
-            function updateData(){                    
-                // clear SOSV structure
-                sosv.unloadSounds();
-                sosv.soundCount = 0;
+            function updateData(){ 
                 // Load new data into SOSV structure
-                if (soundQueue.length === 0){
-                    sosv.soundCount = 0;
-                    data.sounds = [{}];
-                } else{
+                if (soundQueue.length !== 0 && playing===false){
                     sosv.soundCount = 1;
                     data.sounds = [soundQueue.shift()];
+                    sosv.loadSounds(data);
+                    playing = true;
+                    setTimeout(function(){
+                        sosv.unloadSounds();
+                        sosv.soundCount = 0;
+                        playing = false;
+                    }, data.sounds[0].dur+1000);
                 }                
-                sosv.loadSounds(data);
                 
                 var currTime = new Date().toISOString();
                 var q = {
                     t1: lastTime,
                     t2: currTime
                 };
-                q.dur1 = 0.3;
+                q.dur1 = 0.0;
                 q.lnp2 = -500;
                 q.loc = gLoc;
                 q.rad = gRad;
@@ -147,7 +149,8 @@ THE SOFTWARE.
                             lng: events[i].location.coordinates[0],
                             src: ['https://acoustic.ifp.illinois.edu:8081/gridfs/'+'publicDb'+'/data?'+queryString],
                             pause: "1",
-                            db: "100"
+                            db: "100",
+                            dur: events[i].duration*1000
                         };
                         soundQueue.push(sound);
                         console.log('sound.src '+sound.src);
