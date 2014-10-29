@@ -139,14 +139,15 @@ THE SOFTWARE.
                         lastTime = new Date(new Date(events[i].recordDate.$date).valueOf()+1).toISOString();
                         var d = events[i].transcript.split(" ");
                         for (var j = 0; j <d.length;j++){
-                            if (stopWords.test(d[j].toLowerCase())){
+                            var dLC = d[j].toLowerCase();
+                            if (stopWords.test(dLC)){
                                 continue;
                             }
-                            var idx = wordVal.indexOf(d[j]);
+                            var idx = wordVal.indexOf(dLC);
                             if (idx > -1){
                                 wordCnt[idx]++;
                             }else{
-                                wordVal.push(d[j]);
+                                wordVal.push(dLC);
                                 wordCnt.push(1);
                             }
                         }
