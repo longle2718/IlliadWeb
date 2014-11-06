@@ -153,11 +153,12 @@ THE SOFTWARE.
                         }
                         console.log(events[i].transcript);
                     }
-                    WordCloud(document.getElementById('myCanvas'), { list: formList(wordVal, wordCnt) } );
                 }).fail(function(){
                     console.log('ajax fail');
                     console.log("No event found!");
                 });
+                
+                WordCloud(document.getElementById('myCanvas'), { list: formList(wordVal, wordCnt) } );
             }
             
             function formList(val, cnt) {
