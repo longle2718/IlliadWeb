@@ -57,7 +57,7 @@ THE SOFTWARE.
                 
                 oms.addListener('click', function(marker) {
                     // Download sound data and play
-                    IllDownData('publicDb', 'publicUser', 'publicPwd', 'data', marker.filename, function(data){
+                    IllDownData('publicDb', 'publicUser', 'publicPwd', 'v_data', marker.filename, function(data){
                         audioCtx.decodeAudioData(data, function(buf){
                             var source = audioCtx.createBufferSource();
                             source.buffer = buf;
@@ -103,35 +103,14 @@ THE SOFTWARE.
                     t1: document.getElementById("t1").value,
                     t2: document.getElementById("t2").value
                 };
-                if (document.getElementById("f1").value){
-                    q.f1 = document.getElementById("f1").value;
-                }
-                if (document.getElementById("f2").value){
-                    q.f2 = document.getElementById("f2").value;
-                }
-                if (document.getElementById("dur1").value){
-                    q.dur1 = document.getElementById("dur1").value;
-                }
-                if (document.getElementById("dur2").value){
-                    q.dur2 = document.getElementById("dur2").value;
-                }
-                if (document.getElementById("lnp1").value){
-                    q.lnp1 = document.getElementById("lnp1").value;
-                }
-                if (document.getElementById("lnp2").value){
-                    q.lnp2 = document.getElementById("lnp2").value;
-                }
                 if (document.getElementById("lat").value && document.getElementById("lng").value){
                     q.loc = [document.getElementById("lat").value, document.getElementById("lng").value];
                 }
                 if (document.getElementById("rad").value){
                     q.rad = document.getElementById("rad").value;
                 }
-                if (document.getElementById("kw").value){
-                    q.kw = document.getElementById("kw").value;
-                }
                 
-                IllQueryEvent('publicDb', 'publicUser', 'publicPwd', 'event', q, function(events){
+                IllQueryEvent('publicDb', 'publicUser', 'publicPwd', 'v_event', q, function(events){
                     events.sort(function(a, b) {
                         return a.logNoiseProb - b.logNoiseProb;
                     });
@@ -194,44 +173,12 @@ THE SOFTWARE.
                 </fieldset>
             </form>
 
-            <form id="formFreq">
-                <fieldset>
-                    <legend id="freq">Frequency</legend>
-                    <label class="label1">Lower frequency (Hz)</label> <input size="25" type="text" id="f1" value="0"/><br>
-                    <label class="label1">Upper frequency (Hz)</label> <input size="25" type="text" id="f2" value="4000"/>
-                </fieldset>
-            </form>
-            
-            <form id="formDur">
-                <fieldset>
-                    <legend id="dur">Duration</legend>
-                    <label class="label1">Lower duration (s)</label> <input size="25" type="text" id="dur1" value="0.0"/><br>
-                    <label class="label1">Upper duration (s)</label> <input size="25" type="text" id="dur2" value="10.0"/>
-                </fieldset>
-            </form>
-            
-            <form id="formLnp">
-                <fieldset>
-                    <legend id="lnp">Log Noise Probability</legend>
-                    <label class="label1">Lower log probability</label> <input size="25" type="text" id="lnp1" value="-1e6"/><br>
-                    <label class="label1">Upper log probability</label> <input size="25" type="text" id="lnp2" value="0.0"/>
-                </fieldset>
-            </form>
-
             <form id="formLoc">
                 <fieldset>
                     <legend id="loc">Location</legend>
                     <label class="label1">Latitude</label> <input size="25" type="text" id="lat" value="40.10979"/><br>
                     <label class="label1">Longitude</label> <input size="25" type="text" id="lng" value="-88.22726"/><br>
                     <label class="label1">Radius (miles)</label> <input size="25" type="text" id="rad" value="1"/>
-                </fieldset>
-            </form>
-
-            <form id="formSpeech">
-                <fieldset>
-                    <legend id="speech">Speech</legend>
-                    <label class="label1">Keyword</label> <input size="25" type="text" id="kw" value="hello"/><br>
-                    <label> </label>
                 </fieldset>
             </form>
             

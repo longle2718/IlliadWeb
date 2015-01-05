@@ -22,11 +22,11 @@
  * THE SOFTWARE.
  */
 
-var IllDownData = function(db, user, pwd, filename, cb_done, cb_fail){
+var IllDownData = function(db, user, pwd, gridCol, filename, cb_done, cb_fail){
     var queryString = $.param({'user':user, 'passwd': pwd, 'filename': filename});
     
     $.ajax({
-        url: 'https://acoustic.ifp.illinois.edu:8081/gridfs/'+db+'/data?'+queryString,
+        url: 'https://acoustic.ifp.illinois.edu:8081/gridfs/'+db+'/'+gridCol+'?'+queryString,
         type:'GET',
         dataType :'arraybuffer',
         timeOut: 10000,
@@ -54,8 +54,8 @@ var IllDownData = function(db, user, pwd, filename, cb_done, cb_fail){
     */
 };
 
-var IllDownEvent = function(db, user, pwd, filename, cb_done, cb_fail){
-    var queryString = $.param({'dbname':db, 'colname':'event', 'user':user, 'passwd': pwd});
+var IllDownEvent = function(db, user, pwd, col, filename, cb_done, cb_fail){
+    var queryString = $.param({'dbname':db, 'colname':col, 'user':user, 'passwd': pwd});
     
     $.ajax({
         url: 'https://acoustic.ifp.illinois.edu:8081/query?'+queryString,
@@ -76,8 +76,8 @@ var IllDownEvent = function(db, user, pwd, filename, cb_done, cb_fail){
     });
 };
 
-var IllUpdateEvent = function(db, user, pwd, filename, op, field){
-    var queryString = $.param({'dbname':db, 'colname':'event', 'user':user, 'passwd': pwd});
+var IllUpdateEvent = function(db, user, pwd, col, filename, op, field){
+    var queryString = $.param({'dbname':db, 'colname':col, 'user':user, 'passwd': pwd});
     
     $.ajax({
         url: 'https://acoustic.ifp.illinois.edu:8081/write?'+queryString,
@@ -95,12 +95,12 @@ var IllUpdateEvent = function(db, user, pwd, filename, op, field){
     });
 };
 
-var IllQueryEvent = function (db, user, pwd, q, cb_done, cb_fail){
+var IllQueryEvent = function (db, user, pwd, col, q, cb_done, cb_fail){
     //var tZoneOffset = 5/24;
     var earthRad = 3959; // miles
     
     // Construct the query string
-    var params = {'dbname':db, 'colname': 'event', 'user': user, 'passwd': pwd};
+    var params = {'dbname':db, 'colname': col, 'user': user, 'passwd': pwd};
     if (q.hasOwnProperty('limit')){
         params.limit = q.limit;
     }
