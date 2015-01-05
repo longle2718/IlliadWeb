@@ -137,7 +137,7 @@ THE SOFTWARE.
                 q.rad = gRad;
                 console.log("loc: "+q.loc[0]+" "+q.loc[1]+", rad: "+q.rad);
                 
-                IllQueryEvent('publicDb', 'publicUser', 'publicPwd', 'event', q, function(events){
+                IllQueryCol('publicDb', 'publicUser', 'publicPwd', 'event', q, function(events){
                     console.log('forming new sound set');
                     for (var i = 0; i <events.length; i++){
                         lastTime = new Date(new Date(events[i].recordDate.$date).valueOf()+1).toISOString();

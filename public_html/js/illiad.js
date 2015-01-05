@@ -22,7 +22,22 @@
  * THE SOFTWARE.
  */
 
-var IllDownData = function(db, user, pwd, gridCol, filename, cb_done, cb_fail){
+/**
+ * IllDownGrid
+ * 
+ * Download from MongoDB's grid collection asynchronously, results
+ * are handled with callbacks.
+ * 
+ * @param {String} db
+ * @param {String} user
+ * @param {String} pwd
+ * @param {String} gridCol, e.g. data
+ * @param {String} filename
+ * @param {function} cb_done
+ * @param {function} cb_fail
+ * @returns {none}
+ */
+var IllDownGrid = function(db, user, pwd, gridCol, filename, cb_done, cb_fail){
     var queryString = $.param({'user':user, 'passwd': pwd, 'filename': filename});
     
     $.ajax({
@@ -34,7 +49,7 @@ var IllDownData = function(db, user, pwd, gridCol, filename, cb_done, cb_fail){
             withCredentials: true
         }
     }).done(function(data){
-        console.log('IllDownData ' + data.byteLength);
+        console.log(data.byteLength);
         cb_done(data);
     }).fail(function(){
         console.log('ajax fail');
@@ -54,7 +69,22 @@ var IllDownData = function(db, user, pwd, gridCol, filename, cb_done, cb_fail){
     */
 };
 
-var IllDownEvent = function(db, user, pwd, col, filename, cb_done, cb_fail){
+/**
+ * IllDownCol
+ * 
+ * Download from MongoDB's collection asynchronously, results
+ * are handled with callbacks
+ * 
+ * @param {String} db
+ * @param {String} user
+ * @param {String} pwd
+ * @param {String} col, e.g. event
+ * @param {String} filename
+ * @param {function} cb_done
+ * @param {function} cb_fail
+ * @returns {none}
+ */
+var IllDownCol = function(db, user, pwd, col, filename, cb_done, cb_fail){
     var queryString = $.param({'dbname':db, 'colname':col, 'user':user, 'passwd': pwd});
     
     $.ajax({
@@ -68,7 +98,7 @@ var IllDownEvent = function(db, user, pwd, col, filename, cb_done, cb_fail){
         }
     }).done(function(data){
         var event = JSON.parse(data);
-        console.log('IllDownEvent ' + event[0].filename);
+        console.log(event[0].filename);
         cb_done(event);
     }).fail(function(){
         console.log('ajax fail');
@@ -76,7 +106,22 @@ var IllDownEvent = function(db, user, pwd, col, filename, cb_done, cb_fail){
     });
 };
 
-var IllUpdateEvent = function(db, user, pwd, col, filename, op, field){
+/**
+ * 
+ * IllUpdateCol
+ * 
+ * Update an item in MongoDB's collection asynchronously.
+ * 
+ * @param {String} db
+ * @param {String} user
+ * @param {String} pwd
+ * @param {String} col, e.g. event
+ * @param {String} filename
+ * @param {String} op: MongoDB operations
+ * @param {String} field: the field to update
+ * @returns {none}
+ */
+var IllUpdateCol = function(db, user, pwd, col, filename, op, field){
     var queryString = $.param({'dbname':db, 'colname':col, 'user':user, 'passwd': pwd});
     
     $.ajax({
@@ -89,13 +134,28 @@ var IllUpdateEvent = function(db, user, pwd, col, filename, op, field){
             withCredentials: true
         }
     }).done(function(data){
-        console.log('IllUpdateEvent ' + data);
+        console.log(data);
     }).fail(function(){
         console.log('ajax fail');
     });
 };
 
-var IllQueryEvent = function (db, user, pwd, col, q, cb_done, cb_fail){
+/**
+ * IllQueryCol
+ * 
+ * Query a MongoDB's collection asynchronously, results
+ * are handled with callbacks
+ * 
+ * @param {String} db
+ * @param {String} user
+ * @param {String} pwd
+ * @param {String} col
+ * @param {String} q
+ * @param {function} cb_done
+ * @param {function} cb_fail
+ * @returns {none}
+ */
+var IllQueryCol = function (db, user, pwd, col, q, cb_done, cb_fail){
     //var tZoneOffset = 5/24;
     var earthRad = 3959; // miles
     

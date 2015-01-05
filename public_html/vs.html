@@ -57,7 +57,7 @@ THE SOFTWARE.
                 
                 oms.addListener('click', function(marker) {
                     // Download sound data and play
-                    IllDownData('publicDb', 'publicUser', 'publicPwd', 'v_data', marker.filename, function(data){
+                    IllDownGrid('publicDb', 'publicUser', 'publicPwd', 'v_data', marker.filename, function(data){
                         audioCtx.decodeAudioData(data, function(buf){
                             var source = audioCtx.createBufferSource();
                             source.buffer = buf;
@@ -110,7 +110,7 @@ THE SOFTWARE.
                     q.rad = document.getElementById("rad").value;
                 }
                 
-                IllQueryEvent('publicDb', 'publicUser', 'publicPwd', 'v_event', q, function(events){
+                IllQueryCol('publicDb', 'publicUser', 'publicPwd', 'v_event', q, function(events){
                     events.sort(function(a, b) {
                         return a.logNoiseProb - b.logNoiseProb;
                     });
