@@ -38,7 +38,7 @@ THE SOFTWARE.
         
         <script>
             var url = "https://acoustic.ifp.illinois.edu:8081";
-            //var url = "http://localhost:8383/temporary/";
+            //var url = "http://localhost:8383";
             var gLoc;
             var map;
             var oms;
@@ -70,7 +70,7 @@ THE SOFTWARE.
              */
             function loadVideo(filename){
                 var mSource = document.getElementById('mSource');
-                mSource.src = "filesystem:"+url+filename;
+                mSource.src = "filesystem:"+url+"/temporary/"+filename;
                 
                 var mVideoP = document.getElementById('videoP');
                 mVideoP.innerHTML = filename;
