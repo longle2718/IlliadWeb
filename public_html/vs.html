@@ -24,7 +24,7 @@ THE SOFTWARE.
 -->
 <html>
     <head>
-        <title>Acoustic Search</title>
+        <title>Video Search</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
@@ -35,14 +35,50 @@ THE SOFTWARE.
         <script src="js/illiad.min.js"></script>
         <script src="js/jquery-ajax-blob-arraybuffer.js"></script>
         <script src="js/oms.min.js"></script>
-
+        
         <script>
-            //window.open("https://acoustic.ifp.illinois.edu:8081");
+            var url = "https://acoustic.ifp.illinois.edu:8081";
+            //var url = "http://localhost:8383/temporary/";
             var gLoc;
             var map;
             var oms;
             var iw = new google.maps.InfoWindow();
             var audioCtx = new AudioContext();
+
+            //window.open(url);
+            window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
+            
+            /**
+             * onError
+             * 
+             * Error callback when creating cache
+             * 
+             * @argument {String} e
+             * @returns {none}
+             */
+            function onError(e) {
+                console.log('Error', e);
+            }
+            
+            /**
+             * loadVideo
+             * 
+             * Reload the video
+             * 
+             * @argument {String} filename
+             * @returns {none}
+             */
+            function loadVideo(filename){
+                var mSource = document.getElementById('mSource');
+                mSource.src = "filesystem:"+url+filename;
+                
+                var mVideoP = document.getElementById('videoP');
+                mVideoP.innerHTML = filename;
+                
+                var mVideo = document.getElementById('mVideo');
+                mVideo.load();
+                mVideo.play();
+            }
             
             $(function(){
                 gLoc = [$('#lat').val(), $('#lng').val()];
@@ -56,16 +92,26 @@ THE SOFTWARE.
                 oms=new OverlappingMarkerSpiderfier(map);
                 
                 oms.addListener('click', function(marker) {
-                    // Download sound data and play
+                    // Download video data and play
                     IllDownGrid('publicDb', 'publicUser', 'publicPwd', 'v_data', marker.filename, function(data){
-                        audioCtx.decodeAudioData(data, function(buf){
-                            var source = audioCtx.createBufferSource();
-                            source.buffer = buf;
-                            source.connect(audioCtx.destination);
-                            source.start(0);
-                        }, function(error){
-                            console.log('audio decoding error');
-                        });
+                        // download video and cache in file system
+                        window.requestFileSystem(window.TEMPORARY, 1024 * 1024, function(fs) {
+                            fs.root.getFile(marker.filename, {create: true}, function(fileEntry) {
+                                fileEntry.createWriter(function(fileWriter) {
+                                    // use html5 video tag to play the cached file
+                                    fileWriter.onwriteend = function(e){
+                                        loadVideo(marker.filename);
+                                    };
+                                    
+                                    fileWriter.onerror = function(e) {
+                                        console.log('Write failed: ' + e.toString());
+                                    };
+                                    
+                                    var blob = new Blob([data], {type: 'video/mp4'});
+                                    fileWriter.write(blob);
+                                },onError);
+                            },onError);
+                        },onError);
                     });
                 });
                 oms.addListener('spiderfy', function(markers) {
@@ -86,13 +132,14 @@ THE SOFTWARE.
                 },1000);
             });
             
-            // Acoustic search
-            // 
-            // Long Le
-            // University of Illinois
-            // longle1@illinois
-            //
-            function acousticSearch() {
+            /**
+             * videoSearch
+             * 
+             * Perform video search in the database
+             * 
+             * @returns {none}
+             */ 
+            function videoSearch() {
                 var markers = oms.getMarkers();
                 for (var i = 0; i <markers.length;i++){
                     markers[i].setMap(null);
@@ -112,13 +159,13 @@ THE SOFTWARE.
                 
                 IllQueryCol('publicDb', 'publicUser', 'publicPwd', 'v_event', q, function(events){
                     events.sort(function(a, b) {
-                        return a.logNoiseProb - b.logNoiseProb;
+                        return  b.duration - a.duration;
                     });
                     for (var i = 0; i <events.length;i++){
                         // Create a marker for each event
                         var marker = new google.maps.Marker({
                             position:new google.maps.LatLng(parseFloat(events[i].location.coordinates[1]), parseFloat(events[i].location.coordinates[0])),
-                            desc:"logNoiseProb:"+events[i].logNoiseProb+" recordDate:"+events[i].recordDate.$date+"\n"+"duration:"+events[i].duration,
+                            desc:"duration:"+events[i].duration+"\n"+"recordDate:"+events[i].recordDate.$date,
                             filename:events[i].filename,
                             icon:'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld='+ (i) +'|FF776B|000000'
                         });
@@ -144,7 +191,7 @@ THE SOFTWARE.
         <!-- Basic CSS -->
         <style>
             #googleMap {
-                width: 85%;
+                width: 80%;
                 height: 100%;
                 position: absolute;
                 background: #000;
@@ -182,9 +229,13 @@ THE SOFTWARE.
                 </fieldset>
             </form>
             
-            <input type="submit" name="button" id="button1" onclick="acousticSearch()" value="Search" />
+            <input type="submit" name="button" id="button1" onclick="videoSearch()" value="Search" />
+            <div>
+                <video id="mVideo" controls width="300" height="200">
+                    <source id="mSource" type="video/mp4"/>
+                </video>
+                <p id="videoP" style="text-align:center"></p>
+            </div>
         </div>
-        
-        
     </body>
 </html>
