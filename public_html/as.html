@@ -139,7 +139,7 @@ THE SOFTWARE.
                         // Create a marker for each event
                         var marker = new google.maps.Marker({
                             position:new google.maps.LatLng(parseFloat(events[i].location.coordinates[1]), parseFloat(events[i].location.coordinates[0])),
-                            desc:"logNoiseProb:"+events[i].logNoiseProb+" recordDate:"+events[i].recordDate.$date+"\n"+"duration:"+events[i].duration,
+                            desc:"logNoiseProb:"+events[i].logNoiseProb+" recordDate:"+events[i].recordDate.$date+" duration:"+events[i].duration,
                             filename:events[i].filename,
                             icon:'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld='+ (i) +'|FF776B|000000'
                         });

@@ -32,33 +32,15 @@ THE SOFTWARE.
             src="https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=true_or_false">
         </script>
         <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script src="js/illiad.min.js"></script>
         
         <script>
-            /* Data points defined as a mixture of WeightedLocation and LatLng objects */
-            var heatMapData = [
-                {location: new google.maps.LatLng(40.1091, -88.2271), weight: 5},
-                new google.maps.LatLng(40.1092, -88.2272),
-                {location: new google.maps.LatLng(40.1093, -88.2273), weight: 20},
-                {location: new google.maps.LatLng(40.1094, -88.2274), weight: 30},
-                {location: new google.maps.LatLng(40.1095, -88.2275), weight: 20},
-                new google.maps.LatLng(40.1096, -88.2276),
-                {location: new google.maps.LatLng(40.1097, -88.2277), weight: 5},
-                {location: new google.maps.LatLng(40.1098, -88.2277), weight: 8},
-                {location: new google.maps.LatLng(40.1099, -88.2277), weight: 10},
-                {location: new google.maps.LatLng(40.1100, -88.2277), weight: 10},
-                {location: new google.maps.LatLng(40.1101, -88.2277), weight: 20},
-                {location: new google.maps.LatLng(40.1102, -88.2277), weight: 30},
-                {location: new google.maps.LatLng(40.1103, -88.2277), weight: 40},
-                {location: new google.maps.LatLng(40.1104, -88.2277), weight: 50},
-                {location: new google.maps.LatLng(40.1105, -88.2277), weight: 50},
-                {location: new google.maps.LatLng(40.1106, -88.2277), weight: 40},
-                {location: new google.maps.LatLng(40.1107, -88.2277), weight: 30}
-            ];
             var gLoc;
             var map;
+            var heatmap = null;
             
             $(function(){
-                gLoc = [40.10979, -88.22726];
+                gLoc = [$('#lat').val(), $('#lng').val()];
                 
                 var mapProp = {
                     center:new google.maps.LatLng(gLoc[0], gLoc[1]),
@@ -66,25 +48,101 @@ THE SOFTWARE.
                     mapTypeId:google.maps.MapTypeId.ROADMAP
                 };
                 map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+                //heatmap = new google.maps.visualization.HeatmapLayer();
                 
-                var heatmap = new google.maps.visualization.HeatmapLayer({
-                    data: heatMapData
-                });
-                heatmap.setMap(map);
+                var currDate = new Date();
+                var prevDate = new Date(currDate);
+                prevDate.setDate(prevDate.getDate()-1);
+                $("#t1").val(prevDate.toISOString());
+                $("#t2").val(currDate.toISOString());
+                setInterval(function(){
+                    var d = new Date();
+                    document.getElementById('time').innerHTML = 'Time '+d.toISOString();
+                },1000);
             });
+            
+            /**
+             * soundHeat
+             * 
+             * Perform acoustic search and draw a heatmap overlay
+             * 
+             * @returns {none}
+             */ 
+            function soundHeat() {
+                var q = {
+                    t1: document.getElementById("t1").value,
+                    t2: document.getElementById("t2").value
+                };
+                if (document.getElementById("lat").value && document.getElementById("lng").value){
+                    q.loc = [document.getElementById("lat").value, document.getElementById("lng").value];
+                }
+                if (document.getElementById("rad").value){
+                    q.rad = document.getElementById("rad").value;
+                }
+                
+                IllQueryCol('publicDb', 'publicUser', 'publicPwd', 'event', q, function(events){
+                    /* Data points can be defined as a mixture of WeightedLocation and LatLng objects */
+                    var heatMapData = [];
+                    for (var i = 0; i <events.length;i++){
+                        // convert from log noise prob to weight 
+                        var mWeight = Math.log(-events[i].logNoiseProb);
+                        heatMapData[i] = {location: new google.maps.LatLng(parseFloat(events[i].location.coordinates[1]), parseFloat(events[i].location.coordinates[0])), weight: mWeight};
+                    }
+                    if (heatmap !== null){
+                       heatmap.setMap(null); 
+                    }
+                    heatmap = new google.maps.visualization.HeatmapLayer({
+                        data: heatMapData
+                    });
+                    heatmap.setMap(map);
+                }, function(){
+                    alert("No event found!");
+                });
+            }
         </script>
             
+        <!-- Basic CSS -->
         <style>
             #googleMap {
-                width: 100%;
+                width: 85%;
                 height: 100%;
                 position: absolute;
                 background: #000;
             }
+            #forms{
+                position: absolute;
+                right: 0%;
+            }
+            .label1{
+                display: block;
+            }
+            #button1{
+                font-size: large;
+            }
         </style>
-        
     </head>
     <body>
         <div id="googleMap"></div>
+
+        <div id="forms">
+            <form id="formTime">
+                <fieldset>
+                    <legend id="time">Time</legend>
+                    <label class="label1">From</label> <input size="25" type="text" id="t1" value="2014-09-05T04:20:38.676Z"/><br>
+                    <label class="label1">To</label> <input size="25" type="text" id="t2" value="2014-09-05T04:25:38.676Z"/>
+                </fieldset>
+            </form>
+
+            <form id="formLoc">
+                <fieldset>
+                    <legend id="loc">Location</legend>
+                    <label class="label1">Latitude</label> <input size="25" type="text" id="lat" value="40.10979"/><br>
+                    <label class="label1">Longitude</label> <input size="25" type="text" id="lng" value="-88.22726"/><br>
+                    <label class="label1">Radius (miles)</label> <input size="25" type="text" id="rad" value="1"/>
+                </fieldset>
+            </form>
+            
+            <input type="submit" name="button" id="button1" onclick="soundHeat()" value="Search" />
+        </div>
     </body>
 </html>

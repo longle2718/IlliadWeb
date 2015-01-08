@@ -165,7 +165,7 @@ THE SOFTWARE.
                         // Create a marker for each event
                         var marker = new google.maps.Marker({
                             position:new google.maps.LatLng(parseFloat(events[i].location.coordinates[1]), parseFloat(events[i].location.coordinates[0])),
-                            desc:"duration:"+events[i].duration+"\n"+"recordDate:"+events[i].recordDate.$date,
+                            desc:"duration:"+events[i].duration+" recordDate:"+events[i].recordDate.$date,
                             filename:events[i].filename,
                             icon:'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld='+ (i) +'|FF776B|000000'
                         });
@@ -186,8 +186,8 @@ THE SOFTWARE.
                     alert("No event found!");
                 });
             }
-            
         </script>
+        
         <!-- Basic CSS -->
         <style>
             #googleMap {
