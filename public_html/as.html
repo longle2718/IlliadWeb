@@ -66,6 +66,8 @@ THE SOFTWARE.
                         }, function(error){
                             console.log('audio decoding error');
                         });
+                    }, function(){
+                        alert("No data found!");
                     });
                 });
                 oms.addListener('spiderfy', function(markers) {
