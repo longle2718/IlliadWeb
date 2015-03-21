@@ -85,7 +85,7 @@ THE SOFTWARE.
                     var heatMapData = [];
                     for (var i = 0; i <events.length;i++){
                         // convert from log noise prob to weight 
-                        var mWeight = Math.log(-events[i].logNoiseProb);
+                        var mWeight = Math.log(events[i].logProb);
                         heatMapData[i] = {location: new google.maps.LatLng(parseFloat(events[i].location.coordinates[1]), parseFloat(events[i].location.coordinates[0])), weight: mWeight};
                     }
                     if (heatmap !== null){

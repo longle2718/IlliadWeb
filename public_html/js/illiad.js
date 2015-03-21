@@ -203,13 +203,13 @@ var IllQueryCol = function (db, user, pwd, col, q, cb_done, cb_fail){
     }
     
     if (q.hasOwnProperty('lnp1') && q.hasOwnProperty('lnp2')){
-        lnpDat = ',{logNoiseProb:{$gte:'+q.lnp1+', $lte:'+q.lnp2+'}}';
+        lnpDat = ',{logProb:{$gte:'+q.lnp1+', $lte:'+q.lnp2+'}}';
     }
     else if (q.hasOwnProperty('lnp1')){
-        lnpDat = ',{logNoiseProb:{$gte:'+q.lnp1+'}}';
+        lnpDat = ',{logProb:{$gte:'+q.lnp1+'}}';
     }
     else if (q.hasOwnProperty('lnp2')){
-        lnpDat = ',{logNoiseProb:{$lte:'+q.lnp2+'}}';
+        lnpDat = ',{logProb:{$lte:'+q.lnp2+'}}';
     }
     else{
         lnpDat = '';
