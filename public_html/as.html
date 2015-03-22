@@ -129,38 +129,53 @@ THE SOFTWARE.
                 if (document.getElementById("rad").value){
                     q.rad = document.getElementById("rad").value;
                 }
-                if (document.getElementById("kw").value){
-                    q.kw = document.getElementById("kw").value;
-                }
                 
-                IllQueryCol('publicDb', 'publicUser', 'publicPwd', 'event', q, function(events){
-                    events.sort(function(a, b) {
-                        return -a.logProb + b.logProb;
-                    });
-                    for (var i = 0; i <events.length;i++){
-                        // Create a marker for each event
-                        var marker = new google.maps.Marker({
-                            position:new google.maps.LatLng(parseFloat(events[i].location.coordinates[1]), parseFloat(events[i].location.coordinates[0])),
-                            desc:"logProb:"+events[i].logProb+" recordDate:"+events[i].recordDate.$date+" duration:"+events[i].duration,
-                            filename:events[i].filename,
-                            icon:'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld='+ (i) +'|FF776B|000000'
-                        });
-                        marker.setMap(map);
-                        
-                        google.maps.event.addListener(marker, 'mouseover', (function(marker) {
-                            return function(){
-                                iw.setContent(marker.desc);
-                                iw.open(map, marker);
-                            };
-                        })(marker));
-                        google.maps.event.addListener(marker, 'mouseout', function(){
-                            iw.close();
-                        });
-                        oms.addMarker(marker);
+                if ($('input[name="infer"]:checked').val() === "tag"){
+                    if (document.getElementById("kw").value){
+                        q.kw = document.getElementById("kw").value;
                     }
-                }, function(){
-                    alert("No event found!");
-                });
+
+                    IllQueryCol('publicDb', 'publicUser', 'publicPwd', 'event', q, function(events){
+                        events.sort(function(a, b) {
+                            return -a.logProb + b.logProb;
+                        });
+                        for (var i = 0; i <events.length;i++){
+                            // Create a marker for each event
+                            var marker = new google.maps.Marker({
+                                position:new google.maps.LatLng(parseFloat(events[i].location.coordinates[1]), parseFloat(events[i].location.coordinates[0])),
+                                desc:"logProb:"+events[i].logProb+" recordDate:"+events[i].recordDate.$date+" duration:"+events[i].duration,
+                                filename:events[i].filename,
+                                icon:'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld='+ (i) +'|FF776B|000000'
+                            });
+                            marker.setMap(map);
+
+                            google.maps.event.addListener(marker, 'mouseover', (function(marker) {
+                                return function(){
+                                    iw.setContent(marker.desc);
+                                    iw.open(map, marker);
+                                };
+                            })(marker));
+                            google.maps.event.addListener(marker, 'mouseout', function(){
+                                iw.close();
+                            });
+                            oms.addMarker(marker);
+                        }
+                    }, function(){
+                        alert("No event found!");
+                    });
+                }
+                else if ($('input[name="infer"]:checked').val() === "prob"){
+                    switch ($("#classes").val()){
+                        case 'kn':
+                            break;
+                        case 'ds':
+                            break;
+                        case 'st':
+                            break;
+                        case 'cm':
+                            break;
+                    }
+                }
             }
             
         </script>
@@ -231,9 +246,19 @@ THE SOFTWARE.
 
             <form id="formSpeech">
                 <fieldset>
-                    <legend id="speech">Speech</legend>
-                    <label class="label1">Keyword</label> <input size="25" type="text" id="kw" value="hello"/><br>
-                    <label> </label>
+                    <legend id="speech">Inference</legend>
+                    <form>
+                    <input type="radio" name="infer" value="tag" checked>Tag<br>
+                    <input size="25" type="text" id="kw" value="hello"/><br>
+                    
+                    <input type="radio" name="infer" value="prob">Probabilistic<br>
+                    <select id="classes">
+                    <option value="kn">Knock (door, table)</option>
+                    <option value="ds">Door slam</option>
+                    <option value="st">Steps</option>
+                    <option value="cm">Chair moving</option>
+                    </select>
+                    </form>
                 </fieldset>
             </form>
             
