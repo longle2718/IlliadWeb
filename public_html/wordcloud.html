@@ -123,7 +123,7 @@ THE SOFTWARE.
                 
                 var timeDat = '{recordDate:{$gte:{$date:"'+ q.t1+'"}, $lte:{$date:"'+q.t2+'"}}}';
                 var locDat = ',{location:{$geoWithin:{$centerSphere:[['+q.loc[1]+','+q.loc[0]+'], '+q.rad/earthRad+']}}}';
-                var kwDat = ',{transcript: {$exists: true}}';
+                var kwDat = ',{tag: {$exists: true}}';
                 var postDat = '{$and:['+timeDat+locDat+kwDat+']}';
                 
                 $.ajax({
@@ -137,7 +137,7 @@ THE SOFTWARE.
                     var events = JSON.parse(data);
                     for (var i = 0; i <events.length;i++){
                         lastTime = new Date(new Date(events[i].recordDate.$date).valueOf()+1).toISOString();
-                        var d = events[i].transcript.split(" ");
+                        var d = events[i].tag.split(" ");
                         for (var j = 0; j <d.length;j++){
                             var dLC = d[j].toLowerCase();
                             if (stopWords.test(dLC)){
@@ -151,7 +151,7 @@ THE SOFTWARE.
                                 wordCnt.push(1);
                             }
                         }
-                        console.log(events[i].transcript);
+                        console.log(events[i].tag);
                     }
                 }).fail(function(){
                     console.log('ajax fail');
