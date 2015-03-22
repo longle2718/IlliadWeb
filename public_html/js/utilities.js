@@ -39,6 +39,10 @@ var gVoiceApi = function(key, data, cb_done, cb_fail){
     $.ajax({
         url: 'https://www.google.com/speech-api/v2/recognize?'+queryString,
         type:'POST',
+        headers: {
+            "Content-Type":"audio/l16; rate=16000;"
+        },
+        data: data,
         dataType :'arraybuffer',
         timeOut: 10000,
         xhrFields: {

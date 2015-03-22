@@ -59,22 +59,23 @@ THE SOFTWARE.
                     // Download sound data and play
                     IllDownGrid('publicDb', 'publicUser', 'publicPwd', 'data', marker.filename, function(data){
                         audioCtx.decodeAudioData(data, function(buf){
+                            // Play the sound
                             var source = audioCtx.createBufferSource();
                             source.buffer = buf;
                             source.connect(audioCtx.destination);
                             source.start(0);
+                            
+                            // Get updated tags from the user
+                            var newtag = prompt("Modify tags", marker.tag);
+                            if (newtag){
+                                IllUpdateCol('publicDb', 'publicUser', 'publicPwd', 'event',marker.filename, "set", '{tag:"'+newtag+'"}');
+                            }
                         }, function(error){
                             console.log('audio decoding error');
                         });
                     }, function(){
                         alert("No data found!");
                     });
-                });
-                oms.addListener('spiderfy', function(markers) {
-
-                });
-                oms.addListener('unspiderfy', function(markers) {
-                    
                 });
                 
                 var currDate = new Date();
@@ -88,12 +89,11 @@ THE SOFTWARE.
                 },1000);
             });
             
-            // Acoustic search
-            // 
-            // Long Le
-            // University of Illinois
-            // longle1@illinois
-            //
+            /**
+             * acousticSearch
+             * 
+             * @returns {none}
+             */
             function acousticSearch() {
                 var markers = oms.getMarkers();
                 for (var i = 0; i <markers.length;i++){
@@ -130,39 +130,11 @@ THE SOFTWARE.
                     q.rad = document.getElementById("rad").value;
                 }
                 
+                // Handle tag and pred separately
                 if ($('input[name="infer"]:checked').val() === "tag"){
                     if (document.getElementById("kw").value){
                         q.kw = document.getElementById("kw").value;
                     }
-
-                    IllQueryCol('publicDb', 'publicUser', 'publicPwd', 'event', q, function(events){
-                        events.sort(function(a, b) {
-                            return -a.logProb + b.logProb;
-                        });
-                        for (var i = 0; i <events.length;i++){
-                            // Create a marker for each event
-                            var marker = new google.maps.Marker({
-                                position:new google.maps.LatLng(parseFloat(events[i].location.coordinates[1]), parseFloat(events[i].location.coordinates[0])),
-                                desc:"logProb:"+events[i].logProb+" recordDate:"+events[i].recordDate.$date+" duration:"+events[i].duration,
-                                filename:events[i].filename,
-                                icon:'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld='+ (i) +'|FF776B|000000'
-                            });
-                            marker.setMap(map);
-
-                            google.maps.event.addListener(marker, 'mouseover', (function(marker) {
-                                return function(){
-                                    iw.setContent(marker.desc);
-                                    iw.open(map, marker);
-                                };
-                            })(marker));
-                            google.maps.event.addListener(marker, 'mouseout', function(){
-                                iw.close();
-                            });
-                            oms.addMarker(marker);
-                        }
-                    }, function(){
-                        alert("No event found!");
-                    });
                 }
                 else if ($('input[name="infer"]:checked').val() === "pred"){
                     switch ($("#classes").val()){
@@ -178,6 +150,37 @@ THE SOFTWARE.
                             break;
                     }
                 }
+                
+                // Query events
+                IllQueryCol('publicDb', 'publicUser', 'publicPwd', 'event', q, function(events){
+                    events.sort(function(a, b) {
+                        return -a.logProb + b.logProb;
+                    });
+                    for (var i = 0; i <events.length;i++){
+                        // Create a marker for each event
+                        var marker = new google.maps.Marker({
+                            position:new google.maps.LatLng(parseFloat(events[i].location.coordinates[1]), parseFloat(events[i].location.coordinates[0])),
+                            tag: events[i].tag,
+                            recordDate: events[i].recordDate.$date,
+                            filename: events[i].filename,
+                            icon:'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld='+ (i) +'|FF776B|000000'
+                        });
+                        marker.setMap(map);
+
+                        google.maps.event.addListener(marker, 'mouseover', (function(marker) {
+                            return function(){
+                                iw.setContent("<p>" +marker.recordDate+"<br />"+marker.tag+"</p>");
+                                iw.open(map, marker);
+                            };
+                        })(marker));
+                        google.maps.event.addListener(marker, 'mouseout', function(){
+                            iw.close();
+                        });
+                        oms.addMarker(marker);
+                    }
+                }, function(){
+                    alert("No event found!");
+                });
             }
             
         </script>
@@ -233,7 +236,7 @@ THE SOFTWARE.
                 <fieldset>
                     <legend id="lnp">Log Probability</legend>
                     <label class="label1">Lower log probability</label> <input size="25" type="text" id="lnp1" value="0.0"/><br>
-                    <label class="label1">Upper log probability</label> <input size="25" type="text" id="lnp2" value="1e3"/>
+                    <label class="label1">Upper log probability</label> <input size="25" type="text" id="lnp2" value="1e4"/>
                 </fieldset>
             </form>
 

@@ -89,8 +89,8 @@ var IllDownCol = function(db, user, pwd, col, filename, cb_done, cb_fail){
     
     $.ajax({
         url: 'https://acoustic.ifp.illinois.edu:8081/query?'+queryString,
-        data: '{filename:"'+filename+'"}',
         type:'POST',
+        data: '{filename:"'+filename+'"}',
         dataType: 'text',
         timeOut: 10000,
         xhrFields: {
@@ -126,8 +126,8 @@ var IllUpdateCol = function(db, user, pwd, col, filename, op, field){
     
     $.ajax({
         url: 'https://acoustic.ifp.illinois.edu:8081/write?'+queryString,
-        data: '{filename:"'+filename+'"}\n{$'+op+':'+field+'}',
         type:'POST',
+        data: '{filename:"'+filename+'"}\n{$'+op+':'+field+'}',
         dataType: 'text',
         timeOut: 10000,
         xhrFields: {
@@ -232,8 +232,8 @@ var IllQueryCol = function (db, user, pwd, col, q, cb_done, cb_fail){
     
     $.ajax({
         url: 'https://acoustic.ifp.illinois.edu:8081/query?'+queryString,
-        data: postDat,
         type:'POST',
+        data: postDat,
         dataType: 'text',
         timeOut: 10000
     }).done(function(data){
