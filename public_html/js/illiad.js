@@ -31,7 +31,7 @@
  * @param {String} db
  * @param {String} user
  * @param {String} pwd
- * @param {String} gridCol, e.g. data
+ * @param {String} gridCol e.g. data
  * @param {String} filename
  * @param {function} cb_done
  * @param {function} cb_fail
@@ -78,7 +78,7 @@ var IllDownGrid = function(db, user, pwd, gridCol, filename, cb_done, cb_fail){
  * @param {String} db
  * @param {String} user
  * @param {String} pwd
- * @param {String} col, e.g. event
+ * @param {String} col e.g. event
  * @param {String} filename
  * @param {function} cb_done
  * @param {function} cb_fail
@@ -115,10 +115,10 @@ var IllDownCol = function(db, user, pwd, col, filename, cb_done, cb_fail){
  * @param {String} db
  * @param {String} user
  * @param {String} pwd
- * @param {String} col, e.g. event
+ * @param {String} col e.g. event
  * @param {String} filename
- * @param {String} op: MongoDB operations
- * @param {String} field: the field to update
+ * @param {String} op MongoDB operations
+ * @param {String} field the field to update
  * @returns {none}
  */
 var IllUpdateCol = function(db, user, pwd, col, filename, op, field){

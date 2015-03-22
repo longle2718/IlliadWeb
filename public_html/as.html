@@ -164,7 +164,7 @@ THE SOFTWARE.
                         alert("No event found!");
                     });
                 }
-                else if ($('input[name="infer"]:checked').val() === "prob"){
+                else if ($('input[name="infer"]:checked').val() === "pred"){
                     switch ($("#classes").val()){
                         case 'kn':
                             break;
@@ -173,6 +173,8 @@ THE SOFTWARE.
                         case 'st':
                             break;
                         case 'cm':
+                            break;
+                        case 'sp':
                             break;
                     }
                 }
@@ -251,12 +253,13 @@ THE SOFTWARE.
                     <input type="radio" name="infer" value="tag" checked>Tag<br>
                     <input size="25" type="text" id="kw" value="hello"/><br>
                     
-                    <input type="radio" name="infer" value="prob">Probabilistic<br>
+                    <input type="radio" name="infer" value="pred">Predict<br>
                     <select id="classes">
                     <option value="kn">Knock (door, table)</option>
                     <option value="ds">Door slam</option>
                     <option value="st">Steps</option>
                     <option value="cm">Chair moving</option>
+                    <option value="sp">Speech</option>
                     </select>
                     </form>
                 </fieldset>
