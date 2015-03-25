@@ -56,3 +56,156 @@ var gVoiceApi = function(key, data, cb_done, cb_fail){
         cb_fail();
     });
 };
+
+/**
+* 
+* @returns {q}
+*/
+var getBasicQuery = function (){
+   var q = {
+       t1: $("#t1").val(),
+       t2: $("#t2").val()
+   };
+   if ($("#f1").val()){
+       q.f1 = $("#f1").val();
+   }
+   if ($("#f2").val()){
+       q.f2 = $("#f2").val();
+   }
+   if ($("#dur1").val()){
+       q.dur1 = $("#dur1").val();
+   }
+   if ($("#dur2").val()){
+       q.dur2 = $("#dur2").val();
+   }
+   if ($("#lnp1").val()){
+       q.lnp1 = $("#lnp1").val();
+   }
+   if ($("#lnp2").val()){
+       q.lnp2 = $("#lnp2").val();
+   }
+   if ($("#lat").val() && $("#lng").val()){
+       q.loc = [$("#lat").val(), $("#lng").val()];
+   }
+   if ($("#rad").val()){
+       q.rad = $("#rad").val();
+   }
+
+   return q;
+};
+
+/**
+* 
+* @returns {model}
+*/
+var getPredModel = function(){
+   var model = new PredModel();
+   switch ($("#classes").val()){
+       case 'air_conditioner':
+           $.getJSON("data/air_conditioner.json", function(json){
+               model.fromJSON(json);
+           });
+           break;
+       case 'car_horn':
+           $.getJSON("data/car_horn.json", function(json){
+               model.fromJSON(json);
+           });
+           break;
+       case 'children_playing':
+           $.getJSON("data/children_playing.json", function(json){
+               model.fromJSON(json);
+           });
+           break;
+       case 'dog_bark':
+           $.getJSON("data/dog_bark.json", function(json){
+               model.fromJSON(json);
+           });
+           break;
+       case 'drilling':
+           $.getJSON("data/drilling.json", function(json){
+               model.fromJSON(json);
+           });
+           break;
+       case 'engine_idling':
+           $.getJSON("data/engine_idling.json", function(json){
+               model.fromJSON(json);
+           });
+           break;
+       case 'gun_shot':
+           $.getJSON("data/gun_shot.json", function(json){
+               model.fromJSON(json);
+           });
+           break;
+       case 'jackhammer':
+           $.getJSON("data/jackhammer.json", function(json){
+               model.fromJSON(json);
+           });
+           break;
+       case 'siren':
+           $.getJSON("data/siren.json", function(json){
+               model.fromJSON(json);
+           });
+           break;
+       case 'street_music':
+           $.getJSON("data/street_music.json", function(json){
+               model.fromJSON(json);
+           });
+           break;
+       case 'kn':
+           break;
+       case 'ds':
+           break;
+       case 'st':
+           break;
+       case 'cm':
+           break;
+       case 'sp':
+           break;
+   }
+   return model;
+};
+
+var PredModel = function () {
+    this.alpha;
+    this.bias; // score bias
+    this.kernelFcn;
+    this.kernelScale;
+    this.mu; // standardization mean
+    this.sigma; // standardization sigma
+    this.sv; // support vectos
+    this.svl; // support vector labels
+    this.sxfp; // score transform parameters
+    console.log('model instance created');
+};
+PredModel.prototype = {
+    fromJSON: function(json){
+        this.alpha = json.alpha;
+        this.bias = json.bias;
+        this.kernelFcn = json.kernelFcn;
+        this.kernelScale= json.kernelScale;
+        this.mu = json.mu;
+        this.sigma = json.sigma;
+        this.sv = json.sv;
+        this.svl = json.svl;
+        this.sxfp = json.sxfp;
+    },
+    predict: function(model, feat){
+        if (this.kernelFcn === 'gaussian'){
+            var std_feat = math.dotDivide(math.subtract(feat, model.mu), model.sigma);
+            wx = new Array(model.sv.length);
+            for (k = 0; k < model.sv.length; k++){
+                wx[k] = model.alpha[k]*model.svl[k]*math.exp(-math.pow(math.norm(math.subtract(model.sv[k], std_feat),2),2)/math.pow(model.kernelScale,2));
+            }
+            score = math.sum(wx)+model.bias;
+            return sigmoid(score, model.sxfp[0], model.sxfp[1]);
+        }
+        else{
+            console.log("ERROR! unrecognized kernel type." + this.kernelType);
+            return null;
+        }
+    }
+};
+
+var sigmoid = function(x,a,b){
+    return 1/(1+math.exp(a*x+b));
+};

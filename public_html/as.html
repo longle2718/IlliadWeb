@@ -35,6 +35,8 @@ THE SOFTWARE.
         <script src="js/illiad.min.js"></script>
         <script src="js/jquery-ajax-blob-arraybuffer.js"></script>
         <script src="js/oms.min.js"></script>
+        <script src="js/math.min.js"></script>
+        <script src="js/utilities.js"></script>
 
         <script>
             //window.open("https://acoustic.ifp.illinois.edu:8081");
@@ -43,6 +45,88 @@ THE SOFTWARE.
             var oms;
             var iw = new google.maps.InfoWindow();
             var audioCtx = new AudioContext();
+            
+            /**
+             * acousticSearch
+             * 
+             * @returns {none}
+             */
+            function acousticSearch() {
+                var markers = oms.getMarkers();
+                for (var i = 0; i <markers.length;i++){
+                    markers[i].setMap(null);
+                }
+                oms.clearMarkers();
+                
+                var q = getBasicQuery();
+                
+                // Handle tag and pred separately
+                if ($('input[name="infer"]:checked').val() === "tag"){
+                    if ($("#kw").val()){
+                        q.kw = $("#kw").val();
+                    }
+                }
+                else if ($('input[name="infer"]:checked').val() === "pred"){
+                    var model = getPredModel();
+                }
+                
+                // Query events
+                IllQueryCol('publicDb', 'publicUser', 'publicPwd', 'event', q, function(events){
+                    for (var j = 0; j <events.length;j++){
+                        var feat = [];
+                        for (var i=0; i < model.mu.length; i++){
+                            feat.push(0);
+                        }
+                        var rIdx = Object.keys(events[j].TFRidge); // ridge indexes
+                        for (var i=0;i < rIdx.length; i++){
+                            var f = events[j].TFRidge[rIdx[i]].freq;
+                            feat[i*2] = math.mean(f);
+                            feat[i*2+1] = math.std(f);
+                        }
+                        for (var i=0;i< rIdx.length; i++){
+                            var t = events[j].TFRidge[rIdx[i]].time;
+                            var d = math.subtract(t,math.min(t)); // duration
+                            feat[model.mu.length/2+i*2] = math.mean(d);
+                            feat[model.mu.length/2+i*2+1] = math.std(d);
+                        }
+                        // Use model to augment score
+                        if (model){
+                            events[j].score = math.sum(events[j].logProb)*model.predict(model, feat);
+                        }
+                        else{
+                            events[j].score = math.sum(events[j].logProb);
+                        }
+                    }
+                    // sort events based on score
+                    events.sort(function(a, b) {
+                            return -a.delta + b.delta;
+                    });
+                    for (var i = 0; i <events.length;i++){
+                        // Create a marker for each event
+                        var marker = new google.maps.Marker({
+                            position:new google.maps.LatLng(parseFloat(events[i].location.coordinates[1]), parseFloat(events[i].location.coordinates[0])),
+                            tag: events[i].tag,
+                            recordDate: events[i].recordDate.$date,
+                            filename: events[i].filename,
+                            icon:'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld='+ (i) +'|FF776B|000000'
+                        });
+                        marker.setMap(map);
+
+                        google.maps.event.addListener(marker, 'mouseover', (function(marker) {
+                            return function(){
+                                iw.setContent("<p>" +marker.recordDate+"<br />"+marker.tag+"</p>");
+                                iw.open(map, marker);
+                            };
+                        })(marker));
+                        google.maps.event.addListener(marker, 'mouseout', function(){
+                            iw.close();
+                        });
+                        oms.addMarker(marker);
+                    }
+                }, function(){
+                    alert("No event found!");
+                });
+            }
             
             $(function(){
                 gLoc = [$('#lat').val(), $('#lng').val()];
@@ -88,100 +172,6 @@ THE SOFTWARE.
                     document.getElementById('time').innerHTML = 'Time '+d.toISOString();
                 },1000);
             });
-            
-            /**
-             * acousticSearch
-             * 
-             * @returns {none}
-             */
-            function acousticSearch() {
-                var markers = oms.getMarkers();
-                for (var i = 0; i <markers.length;i++){
-                    markers[i].setMap(null);
-                }
-                oms.clearMarkers();
-                
-                var q = {
-                    t1: document.getElementById("t1").value,
-                    t2: document.getElementById("t2").value
-                };
-                if (document.getElementById("f1").value){
-                    q.f1 = document.getElementById("f1").value;
-                }
-                if (document.getElementById("f2").value){
-                    q.f2 = document.getElementById("f2").value;
-                }
-                if (document.getElementById("dur1").value){
-                    q.dur1 = document.getElementById("dur1").value;
-                }
-                if (document.getElementById("dur2").value){
-                    q.dur2 = document.getElementById("dur2").value;
-                }
-                if (document.getElementById("lnp1").value){
-                    q.lnp1 = document.getElementById("lnp1").value;
-                }
-                if (document.getElementById("lnp2").value){
-                    q.lnp2 = document.getElementById("lnp2").value;
-                }
-                if (document.getElementById("lat").value && document.getElementById("lng").value){
-                    q.loc = [document.getElementById("lat").value, document.getElementById("lng").value];
-                }
-                if (document.getElementById("rad").value){
-                    q.rad = document.getElementById("rad").value;
-                }
-                
-                // Handle tag and pred separately
-                if ($('input[name="infer"]:checked').val() === "tag"){
-                    if (document.getElementById("kw").value){
-                        q.kw = document.getElementById("kw").value;
-                    }
-                }
-                else if ($('input[name="infer"]:checked').val() === "pred"){
-                    switch ($("#classes").val()){
-                        case 'kn':
-                            break;
-                        case 'ds':
-                            break;
-                        case 'st':
-                            break;
-                        case 'cm':
-                            break;
-                        case 'sp':
-                            break;
-                    }
-                }
-                
-                // Query events
-                IllQueryCol('publicDb', 'publicUser', 'publicPwd', 'event', q, function(events){
-                    events.sort(function(a, b) {
-                        return -a.logProb + b.logProb;
-                    });
-                    for (var i = 0; i <events.length;i++){
-                        // Create a marker for each event
-                        var marker = new google.maps.Marker({
-                            position:new google.maps.LatLng(parseFloat(events[i].location.coordinates[1]), parseFloat(events[i].location.coordinates[0])),
-                            tag: events[i].tag,
-                            recordDate: events[i].recordDate.$date,
-                            filename: events[i].filename,
-                            icon:'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld='+ (i) +'|FF776B|000000'
-                        });
-                        marker.setMap(map);
-
-                        google.maps.event.addListener(marker, 'mouseover', (function(marker) {
-                            return function(){
-                                iw.setContent("<p>" +marker.recordDate+"<br />"+marker.tag+"</p>");
-                                iw.open(map, marker);
-                            };
-                        })(marker));
-                        google.maps.event.addListener(marker, 'mouseout', function(){
-                            iw.close();
-                        });
-                        oms.addMarker(marker);
-                    }
-                }, function(){
-                    alert("No event found!");
-                });
-            }
             
         </script>
         <!-- Basic CSS -->
@@ -254,15 +244,25 @@ THE SOFTWARE.
                     <legend id="speech">Inference</legend>
                     <form>
                     <input type="radio" name="infer" value="tag" checked>Tag<br>
-                    <input size="25" type="text" id="kw" value="hello"/><br>
+                    <input size="25" type="text" id="kw" value=""/><br>
                     
                     <input type="radio" name="infer" value="pred">Predict<br>
                     <select id="classes">
-                    <option value="kn">Knock (door, table)</option>
-                    <option value="ds">Door slam</option>
-                    <option value="st">Steps</option>
-                    <option value="cm">Chair moving</option>
-                    <option value="sp">Speech</option>
+                        <option value="air_conditioner">Air conditioner</option>
+                        <option value="car_horn">Car horn</option>
+                        <option value="children_playing">Children playing</option>
+                        <option value="dog_bark">Dog bark</option>
+                        <option value="drilling">Drilling</option>
+                        <option value="engine_idling">Engine idling</option>
+                        <option value="gun_shot">Gun shot</option>
+                        <option value="jackhammer">Jackhammer</option>
+                        <option value="siren">Siren</option>
+                        <option value="street_music">Street music</option>
+                        <option value="kn">Knock (door, table)</option>
+                        <option value="ds">Door slam</option>
+                        <option value="st">Steps</option>
+                        <option value="cm">Chair moving</option>
+                        <option value="sp">Speech</option>
                     </select>
                     </form>
                 </fieldset>
