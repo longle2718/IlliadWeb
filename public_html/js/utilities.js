@@ -50,7 +50,7 @@ var gVoiceApi = function(key, data, cb_done, cb_fail){
         }
     }).done(function(xscript){
         console.log('ajax done');
-        cb_done(xscript);
+        cb_done(JSON.parse(xscript));
     }).fail(function(){
         console.log('ajax fail');
         cb_fail();
@@ -145,15 +145,30 @@ var getPredModel = function(){
                model.fromJSON(json);
            });
            break;
-       case 'kn':
+       case 'knock':
+           $.getJSON("data/knock.json", function(json){
+               model.fromJSON(json);
+           });
            break;
-       case 'ds':
+       case 'door_slam':
+           $.getJSON("data/door_slam.json", function(json){
+               model.fromJSON(json);
+           });
            break;
-       case 'st':
+       case 'steps':
+           $.getJSON("data/steps.json", function(json){
+               model.fromJSON(json);
+           });
            break;
-       case 'cm':
+       case 'chair_moving':
+           $.getJSON("data/chair_moving.json", function(json){
+               model.fromJSON(json);
+           });
            break;
-       case 'sp':
+       case 'speech':
+           $.getJSON("data/speech.json", function(json){
+               model.fromJSON(json);
+           });
            break;
    }
    return model;
