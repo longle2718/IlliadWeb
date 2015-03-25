@@ -99,7 +99,7 @@ THE SOFTWARE.
                     }
                     // sort events based on score
                     events.sort(function(a, b) {
-                            return -a.delta + b.delta;
+                            return -a.score + b.score;
                     });
                     for (var i = 0; i <events.length;i++){
                         // Create a marker for each event
