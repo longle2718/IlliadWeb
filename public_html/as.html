@@ -149,6 +149,20 @@ THE SOFTWARE.
                             source.connect(audioCtx.destination);
                             source.start(0);
                             
+                            // if pred for speech, then invoke ASR (auto speech recog) service for init help
+                            /*
+                            var ASR_result = '';
+                            if ($('input[name="infer"]:checked').val() === "pred" && $("#classes").val() === "speech"){
+                                gVoiceApi('AIzaSyD5NvcrQ54Rbzdxpo3FtJsAyvUjy6O3cn4', data, function(xscript){
+                                    ASR_result = ' ';
+                                    for (var i = 0; i < xscript[2].result[1].alternative.length; i++){
+                                        ASR_result = ASR_result+xscript[2].result[1].alternative[i].transcript;
+                                    }
+                                }, function(){
+                                    console.log('ASR failed');
+                                });
+                            }
+                            */
                             // Get updated tags from the user
                             var newtag = prompt("Modify tags", marker.tag);
                             if (newtag){
