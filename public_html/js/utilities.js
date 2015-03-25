@@ -78,12 +78,6 @@ var getBasicQuery = function (){
    if ($("#dur2").val()){
        q.dur2 = $("#dur2").val();
    }
-   if ($("#lnp1").val()){
-       q.lnp1 = $("#lnp1").val();
-   }
-   if ($("#lnp2").val()){
-       q.lnp2 = $("#lnp2").val();
-   }
    if ($("#lat").val() && $("#lng").val()){
        q.loc = [$("#lat").val(), $("#lng").val()];
    }

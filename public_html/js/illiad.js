@@ -165,7 +165,7 @@ var IllQueryCol = function (db, user, pwd, col, q, cb_done, cb_fail){
         params.limit = q.limit;
     }
     var queryString = $.param(params);
-    var timeDat, freqDat, durDat, lnpDat, locDat, kwDat;
+    var timeDat, freqDat, durDat, lpDat, locDat, kwDat;
     
     // Construct the query data to send
     if (q.hasOwnProperty('t1') && q.hasOwnProperty('t2')){
@@ -202,17 +202,17 @@ var IllQueryCol = function (db, user, pwd, col, q, cb_done, cb_fail){
         durDat = '';
     }
     
-    if (q.hasOwnProperty('lnp1') && q.hasOwnProperty('lnp2')){
-        lnpDat = ',{logProb:{$gte:'+q.lnp1+', $lte:'+q.lnp2+'}}';
+    if (q.hasOwnProperty('lp1') && q.hasOwnProperty('lp2')){
+        lpDat = ',{logProb:{$gte:'+q.lp1+', $lte:'+q.lp2+'}}';
     }
-    else if (q.hasOwnProperty('lnp1')){
-        lnpDat = ',{logProb:{$gte:'+q.lnp1+'}}';
+    else if (q.hasOwnProperty('lp1')){
+        lpDat = ',{logProb:{$gte:'+q.lp1+'}}';
     }
-    else if (q.hasOwnProperty('lnp2')){
-        lnpDat = ',{logProb:{$lte:'+q.lnp2+'}}';
+    else if (q.hasOwnProperty('lp2')){
+        lpDat = ',{logProb:{$lte:'+q.lp2+'}}';
     }
     else{
-        lnpDat = '';
+        lpDat = '';
     }
     
     if (q.hasOwnProperty('loc') && q.hasOwnProperty('rad')){
@@ -228,7 +228,7 @@ var IllQueryCol = function (db, user, pwd, col, q, cb_done, cb_fail){
     }
     
     // FIX: memcached key is too long
-    var postDat = '{$and:['+timeDat+freqDat+durDat+lnpDat+locDat+kwDat+']}';
+    var postDat = '{$and:['+timeDat+freqDat+durDat+lpDat+locDat+kwDat+']}';
     
     $.ajax({
         url: 'https://acoustic.ifp.illinois.edu:8081/query?'+queryString,
