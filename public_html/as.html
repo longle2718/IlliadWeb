@@ -87,9 +87,9 @@ THE SOFTWARE.
                             }
                             for (var i=0;i< rIdx.length; i++){
                                 var t = events[j].TFRidge[rIdx[i]].time;
-                                var d = math.subtract(t,math.min(t)); // duration
-                                feat[model.mu.length/2+i] = math.mean(d);
-                                feat[model.mu.length/2+i+5] = math.std(d);
+                                //var d = math.subtract(t,math.min(t)); // duration
+                                feat[model.mu.length/2+i] = math.mean(t);
+                                feat[model.mu.length/2+i+5] = math.std(t);
                             }
                             events[j].score = math.sum(events[j].logProb)*model.predict(model, feat);
                         }
