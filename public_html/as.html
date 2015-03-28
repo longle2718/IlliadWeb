@@ -73,24 +73,24 @@ THE SOFTWARE.
                 // Query events
                 IllQueryCol('publicDb', 'publicUser', 'publicPwd', 'event', q, function(events){
                     for (var j = 0; j <events.length;j++){
-                        var feat = [];
-                        for (var i=0; i < model.mu.length; i++){
-                            feat.push(0);
-                        }
-                        var rIdx = Object.keys(events[j].TFRidge); // ridge indexes
-                        for (var i=0;i < rIdx.length; i++){
-                            var f = events[j].TFRidge[rIdx[i]].freq;
-                            feat[i] = math.mean(f);
-                            feat[i+5] = math.std(f);
-                        }
-                        for (var i=0;i< rIdx.length; i++){
-                            var t = events[j].TFRidge[rIdx[i]].time;
-                            var d = math.subtract(t,math.min(t)); // duration
-                            feat[model.mu.length/2+i] = math.mean(d);
-                            feat[model.mu.length/2+i+5] = math.std(d);
-                        }
                         // Use model to augment score
                         if (model){
+                            var feat = [];
+                            for (var i=0; i < model.mu.length; i++){
+                                feat.push(0);
+                            }
+                            var rIdx = Object.keys(events[j].TFRidge); // ridge indexes
+                            for (var i=0;i < rIdx.length; i++){
+                                var f = events[j].TFRidge[rIdx[i]].freq;
+                                feat[i] = math.mean(f);
+                                feat[i+5] = math.std(f);
+                            }
+                            for (var i=0;i< rIdx.length; i++){
+                                var t = events[j].TFRidge[rIdx[i]].time;
+                                var d = math.subtract(t,math.min(t)); // duration
+                                feat[model.mu.length/2+i] = math.mean(d);
+                                feat[model.mu.length/2+i+5] = math.std(d);
+                            }
                             events[j].score = math.sum(events[j].logProb)*model.predict(model, feat);
                         }
                         else{
