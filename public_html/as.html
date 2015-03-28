@@ -167,6 +167,7 @@ THE SOFTWARE.
                             var newtag = prompt("Modify tags", marker.tag);
                             if (newtag){
                                 IllUpdateCol('publicDb', 'publicUser', 'publicPwd', 'event',marker.filename, "set", '{tag:"'+newtag+'"}');
+                                marker.tag = newtag;
                             }
                         }, function(error){
                             console.log('audio decoding error');
