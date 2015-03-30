@@ -69,8 +69,8 @@ THE SOFTWARE.
                                 // Create a marker for each nuc
                                 var marker = new google.maps.Marker({
                                     position:new google.maps.LatLng(data.latitude, data.longitude),
-                                    hostname: json[data.geoplugin_request],
-                                    ip: data.geoplugin_request,
+                                    hostname: json[data.ip],
+                                    ip: data.ip,
                                     icon:'images/computers.png' // Maps Icons Collection https://mapicons.mapsmarker.com
                                 });
                                 marker.setMap(map);
