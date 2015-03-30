@@ -24,7 +24,7 @@ THE SOFTWARE.
 -->
 <html>
     <head>
-        <title>Acoustic Search</title>
+        <title>SwarmBoxes</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
@@ -36,7 +36,6 @@ THE SOFTWARE.
         <script src="js/illiad.min.js"></script>
         <script src="js/oms.min.js"></script>
         <script src="js/ping.js"></script>
-        <script src="https://www.geoplugin.net/javascript.gp"></script>
 
         <script>
             //window.open("https://acoustic.ifp.illinois.edu:8081");
@@ -67,10 +66,10 @@ THE SOFTWARE.
                         var keyArray = Object.keys(json);
                         for (var i=0; i < keyArray.length; i++){
                             // look up location using ip
-                            $.getJSON("https://www.geoplugin.net/json.gp?ip="+keyArray[i]+"&jsoncallback=?", function (data){
+                            $.getJSON("https://www.telize.com/geoip/"+keyArray[i]+"?callback=?", function (data){
                                 // Create a marker for each nuc
                                 var marker = new google.maps.Marker({
-                                    position:new google.maps.LatLng(data.geoplugin_latitude, data.geoplugin_longitude),
+                                    position:new google.maps.LatLng(data.latitude, data.longitude),
                                     hostname: json[data.geoplugin_request],
                                     ip: data.geoplugin_request,
                                     icon:'images/computers.png' // Maps Icons Collection https://mapicons.mapsmarker.com
