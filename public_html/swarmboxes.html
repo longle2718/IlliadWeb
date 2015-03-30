@@ -67,7 +67,7 @@ THE SOFTWARE.
                         var keyArray = Object.keys(json);
                         for (var i=0; i < keyArray.length; i++){
                             // look up location using ip
-                            $.getJSON("http://www.geoplugin.net/json.gp?ip="+keyArray[i]+"&jsoncallback=?", function (data){
+                            $.getJSON("https://www.geoplugin.net/json.gp?ip="+keyArray[i]+"&jsoncallback=?", function (data){
                                 // Create a marker for each nuc
                                 var marker = new google.maps.Marker({
                                     position:new google.maps.LatLng(data.geoplugin_latitude, data.geoplugin_longitude),
