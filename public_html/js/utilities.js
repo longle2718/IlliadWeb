@@ -165,17 +165,17 @@ var getPredModel = function(){
                 model.fromJSON(json);
             });
             break;
-        case 'chair_moving':
+        case 'key_jingle':
             $.getJSON("data/key_jingle.json", function(json){
                 model.fromJSON(json);
             });
             break;
-        case 'chair_moving':
+        case 'phone_ring':
             $.getJSON("data/phone_ring.json", function(json){
                 model.fromJSON(json);
             });
             break;
-        case 'chair_moving':
+        case 'cough':
             $.getJSON("data/cough.json", function(json){
                 model.fromJSON(json);
             });
