@@ -95,81 +95,96 @@ var getBasicQuery = function (){
 var getPredModel = function(){
    var model = new PredModel();
    switch ($("#classes").val()){
-       case 'air_conditioner':
-           $.getJSON("data/air_conditioner.json", function(json){
+        case 'air_conditioner':
+            $.getJSON("data/air_conditioner.json", function(json){
+                model.fromJSON(json);
+            });
+            break;
+        case 'car_horn':
+            $.getJSON("data/car_horn.json", function(json){
+                model.fromJSON(json);
+            });
+            break;
+        case 'children_playing':
+            $.getJSON("data/children_playing.json", function(json){
+                model.fromJSON(json);
+            });
+            break;
+        case 'dog_bark':
+            $.getJSON("data/dog_bark.json", function(json){
+                model.fromJSON(json);
+            });
+            break;
+        case 'drilling':
+            $.getJSON("data/drilling.json", function(json){
+                model.fromJSON(json);
+            });
+            break;
+        case 'engine_idling':
+            $.getJSON("data/engine_idling.json", function(json){
+                model.fromJSON(json);
+            });
+            break;
+        case 'gun_shot':
+            $.getJSON("data/gun_shot.json", function(json){
+                model.fromJSON(json);
+            });
+            break;
+        case 'jackhammer':
+            $.getJSON("data/jackhammer.json", function(json){
+                model.fromJSON(json);
+            });
+            break;
+        case 'siren':
+            $.getJSON("data/siren.json", function(json){
+                model.fromJSON(json);
+            });
+            break;
+        case 'street_music':
+            $.getJSON("data/street_music.json", function(json){
+                model.fromJSON(json);
+            });
+            break;
+        case 'knock':
+            $.getJSON("data/knock.json", function(json){
+                model.fromJSON(json);
+            });
+            break;
+        case 'door_slam':
+            $.getJSON("data/door_slam.json", function(json){
+                model.fromJSON(json);
+            });
+            break;
+        case 'steps':
+            $.getJSON("data/steps.json", function(json){
+                model.fromJSON(json);
+            });
+            break;
+        case 'chair_moving':
+            $.getJSON("data/chair_moving.json", function(json){
+                model.fromJSON(json);
+            });
+            break;
+        case 'chair_moving':
+            $.getJSON("data/key_jingle.json", function(json){
+                model.fromJSON(json);
+            });
+            break;
+        case 'chair_moving':
+            $.getJSON("data/phone_ring.json", function(json){
+                model.fromJSON(json);
+            });
+            break;
+        case 'chair_moving':
+            $.getJSON("data/cough.json", function(json){
+                model.fromJSON(json);
+            });
+            break;
+        case 'speech':
+            $.getJSON("data/speech.json", function(json){
                model.fromJSON(json);
-           });
-           break;
-       case 'car_horn':
-           $.getJSON("data/car_horn.json", function(json){
-               model.fromJSON(json);
-           });
-           break;
-       case 'children_playing':
-           $.getJSON("data/children_playing.json", function(json){
-               model.fromJSON(json);
-           });
-           break;
-       case 'dog_bark':
-           $.getJSON("data/dog_bark.json", function(json){
-               model.fromJSON(json);
-           });
-           break;
-       case 'drilling':
-           $.getJSON("data/drilling.json", function(json){
-               model.fromJSON(json);
-           });
-           break;
-       case 'engine_idling':
-           $.getJSON("data/engine_idling.json", function(json){
-               model.fromJSON(json);
-           });
-           break;
-       case 'gun_shot':
-           $.getJSON("data/gun_shot.json", function(json){
-               model.fromJSON(json);
-           });
-           break;
-       case 'jackhammer':
-           $.getJSON("data/jackhammer.json", function(json){
-               model.fromJSON(json);
-           });
-           break;
-       case 'siren':
-           $.getJSON("data/siren.json", function(json){
-               model.fromJSON(json);
-           });
-           break;
-       case 'street_music':
-           $.getJSON("data/street_music.json", function(json){
-               model.fromJSON(json);
-           });
-           break;
-       case 'knock':
-           $.getJSON("data/knock.json", function(json){
-               model.fromJSON(json);
-           });
-           break;
-       case 'door_slam':
-           $.getJSON("data/door_slam.json", function(json){
-               model.fromJSON(json);
-           });
-           break;
-       case 'steps':
-           $.getJSON("data/steps.json", function(json){
-               model.fromJSON(json);
-           });
-           break;
-       case 'chair_moving':
-           $.getJSON("data/chair_moving.json", function(json){
-               model.fromJSON(json);
-           });
-           break;
-       case 'speech':
-           $.getJSON("data/speech.json", function(json){
-               model.fromJSON(json);
-           });
-           break;
+            });
+            break;
    }
    return model;
 };

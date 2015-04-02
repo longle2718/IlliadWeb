@@ -165,7 +165,7 @@ THE SOFTWARE.
                             */
                             // Get updated tags from the user
                             var newtag = prompt("Modify tags", marker.tag);
-                            if (newtag){
+                            if (newtag || marker.tag){
                                 IllUpdateCol('publicDb', 'publicUser', 'publicPwd', 'event',marker.filename, "set", '{tag:"'+newtag+'"}');
                                 marker.tag = newtag;
                             }
@@ -269,6 +269,9 @@ THE SOFTWARE.
                         <option value="door_slam">Door slam</option>
                         <option value="steps">Steps</option>
                         <option value="chair_moving">Chair moving</option>
+                        <option value="key_jingle">Key jingle</option>
+                        <option value="phone_ring">Phone ring</option>
+                        <option value="cough">Cough</option>
                         <option value="speech">Speech</option>
                     </select>
                     </form>
