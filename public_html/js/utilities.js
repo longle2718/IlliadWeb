@@ -211,6 +211,7 @@ PredModel.prototype = {
         this.sigma = json.sigma;
         this.sv = json.sv;
         this.svl = json.svl;
+        this.xformFcn = json.xformFcn;
         this.sxfp = json.sxfp;
     },
     predict: function(model, feat){
@@ -221,7 +222,16 @@ PredModel.prototype = {
                 wx[k] = model.alpha[k]*model.svl[k]*math.exp(-math.pow(math.norm(math.subtract(model.sv[k], std_feat),2),2)/math.pow(model.kernelScale,2));
             }
             score = math.sum(wx)+model.bias;
-            return sigmoid(score, model.sxfp[0], model.sxfp[1]);
+            
+            if (model.xformFcn === 'sigmoid'){
+                return sigmoid(score, model.sxfp[0], model.sxfp[1]);
+            }
+            else if (model.xformFcn === 'step'){
+                return step(score, model.sxfp[0], model.sxfp[1], model.sxfp[2]);
+            }
+            else{
+                return -1;
+            }
         }
         else{
             console.log("ERROR! unrecognized kernel type." + this.kernelType);
@@ -232,4 +242,16 @@ PredModel.prototype = {
 
 var sigmoid = function(x,a,b){
     return 1/(1+math.exp(a*x+b));
+};
+
+var step = function(x,lb,ub,pi){
+    if (x < lb){
+        return 0;
+    }
+    else if(x >= lb && x <= ub){
+        return pi;
+    }
+    else if (x > ub){
+        return 1;
+    }
 };

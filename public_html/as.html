@@ -91,10 +91,10 @@ THE SOFTWARE.
                                 feat[model.mu.length/2+i] = math.mean(d);
                                 feat[model.mu.length/2+i+5] = math.std(d);
                             }
-                            events[j].score = math.sum(events[j].logProb)*model.predict(model, feat);
+                            events[j].score = math.min(math.sum(events[j].logProb),10e3)*model.predict(model, feat);
                         }
                         else{
-                            events[j].score = math.sum(events[j].logProb);
+                            events[j].score = math.min(math.sum(events[j].logProb),15e3);
                         }
                     }
                     // sort events based on score
@@ -105,6 +105,7 @@ THE SOFTWARE.
                         // Create a marker for each event
                         var marker = new google.maps.Marker({
                             position:new google.maps.LatLng(parseFloat(events[i].location.coordinates[1]), parseFloat(events[i].location.coordinates[0])),
+                            score: events[i].score,
                             tag: events[i].tag,
                             recordDate: events[i].recordDate.$date,
                             filename: events[i].filename,
@@ -114,7 +115,7 @@ THE SOFTWARE.
 
                         google.maps.event.addListener(marker, 'mouseover', (function(marker) {
                             return function(){
-                                iw.setContent("<p>" +marker.recordDate+"<br />"+marker.tag+"</p>");
+                                iw.setContent("<p>"+marker.recordDate+"<br>"+marker.score+"<br>"+marker.tag+"</p>");
                                 iw.open(map, marker);
                             };
                         })(marker));
