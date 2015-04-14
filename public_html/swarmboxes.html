@@ -42,6 +42,47 @@ THE SOFTWARE.
             var oms;
             var iw = new google.maps.InfoWindow();
             
+            /**
+             * Periodic update
+             * 
+             * @returns {undefined}
+             */
+            var pUpdate = function(){
+                var markers = oms.getMarkers();
+                for (var i = 0; i <markers.length;i++){
+                    markers[i].setMap(null);
+                }
+                oms.clearMarkers();
+
+                $.getJSON("data/swarmServers.json", function(json){
+                    var keyArray = Object.keys(json);
+                    for (var i=0; i < keyArray.length; i++){
+                        // look up location using ip
+                        $.getJSON("https://www.telize.com/geoip/"+keyArray[i]+"?callback=?", function (data){
+                            // Create a marker for each nuc
+                            var marker = new google.maps.Marker({
+                                position:new google.maps.LatLng(data.latitude, data.longitude),
+                                hostname: json[data.ip],
+                                ip: data.ip,
+                                icon:'images/computers.png' // Maps Icons Collection https://mapicons.mapsmarker.com
+                            });
+                            marker.setMap(map);
+
+                            google.maps.event.addListener(marker, 'mouseover', (function(marker) {
+                                return function(){
+                                    iw.setContent("<p>" +marker.hostname+"<br />"+marker.ip+"</p>");
+                                    iw.open(map, marker);
+                                };
+                            })(marker));
+                            google.maps.event.addListener(marker, 'mouseout', function(){
+                                iw.close();
+                            });
+                            oms.addMarker(marker);
+                        });
+                    }
+                });
+            };
+            
             $(function(){
                 var gLoc = [40.10979, -88.22726];
                 
@@ -54,41 +95,8 @@ THE SOFTWARE.
                 
                 oms=new OverlappingMarkerSpiderfier(map);
                 
-                setInterval(function(){
-                    var markers = oms.getMarkers();
-                    for (var i = 0; i <markers.length;i++){
-                        markers[i].setMap(null);
-                    }
-                    oms.clearMarkers();
-                
-                    $.getJSON("data/swarmServers.json", function(json){
-                        var keyArray = Object.keys(json);
-                        for (var i=0; i < keyArray.length; i++){
-                            // look up location using ip
-                            $.getJSON("https://www.telize.com/geoip/"+keyArray[i]+"?callback=?", function (data){
-                                // Create a marker for each nuc
-                                var marker = new google.maps.Marker({
-                                    position:new google.maps.LatLng(data.latitude, data.longitude),
-                                    hostname: json[data.ip],
-                                    ip: data.ip,
-                                    icon:'images/computers.png' // Maps Icons Collection https://mapicons.mapsmarker.com
-                                });
-                                marker.setMap(map);
-
-                                google.maps.event.addListener(marker, 'mouseover', (function(marker) {
-                                    return function(){
-                                        iw.setContent("<p>" +marker.hostname+"<br />"+marker.ip+"</p>");
-                                        iw.open(map, marker);
-                                    };
-                                })(marker));
-                                google.maps.event.addListener(marker, 'mouseout', function(){
-                                    iw.close();
-                                });
-                                oms.addMarker(marker);
-                            });
-                        }
-                    });
-                },5000);
+                pUpdate();
+                setInterval(pUpdate, 15000);
             });
             
         </script>
