@@ -89,13 +89,6 @@ THE SOFTWARE.
                 
                 var q = getBasicQuery();
                 
-                // Handle tag and pred separately
-                if ($('input[name="infer"]:checked').val() === "tag"){
-                    if ($("#kw").val()){
-                        q.kw = $("#kw").val();
-                    }
-                }
-                
                 // Query events
                 IllQueryPost('publicDb', 'publicUser', 'publicPwd', 'event', q, function(events){
                     var model = new PredModel();
@@ -196,10 +189,12 @@ THE SOFTWARE.
                 <fieldset>
                     <legend id="speech">Inference</legend>
                     <form>
-                    <input type="radio" name="infer" value="tag" checked>Tag<br>
+                    <!-- <input type="radio" name="infer" value="tag" checked>Tag<br> -->
+                    <label class="label1">Tag</label>
                     <input size="25" type="text" id="kw" value=""/><br>
                     
-                    <input type="radio" name="infer" value="pred">Predict<br>
+                    <!-- <input type="radio" name="infer" value="pred">Predict<br> -->
+                    <label class="label1">Predict</label>
                     <select id="classes">
                         <option value="air_conditioner">Air conditioner</option>
                         <option value="car_horn">Car horn</option>

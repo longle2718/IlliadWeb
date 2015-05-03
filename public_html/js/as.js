@@ -22,28 +22,33 @@
  * THE SOFTWARE.
  */
 var getBasicQuery = function (){
-   var q = {
-       t1: $("#t1").val(),
-       t2: $("#t2").val()
-   };
-   if ($("#f1").val()){
-       q.f1 = $("#f1").val();
-   }
-   if ($("#f2").val()){
-       q.f2 = $("#f2").val();
-   }
-   if ($("#dur1").val()){
-       q.dur1 = $("#dur1").val();
-   }
-   if ($("#dur2").val()){
-       q.dur2 = $("#dur2").val();
-   }
-   if ($("#lat").val() && $("#lng").val()){
-       q.loc = [$("#lat").val(), $("#lng").val()];
-   }
-   if ($("#rad").val()){
-       q.rad = $("#rad").val();
-   }
+    var q = {
+        t1: $("#t1").val(),
+        t2: $("#t2").val()
+    };
+    if ($("#f1").val()){
+        q.f1 = $("#f1").val();
+    }
+    if ($("#f2").val()){
+        q.f2 = $("#f2").val();
+    }
+    if ($("#dur1").val()){
+        q.dur1 = $("#dur1").val();
+    }
+    if ($("#dur2").val()){
+        q.dur2 = $("#dur2").val();
+    }
+    if ($("#lat").val() && $("#lng").val()){
+        q.loc = [$("#lat").val(), $("#lng").val()];
+    }
+    if ($("#rad").val()){
+        q.rad = $("#rad").val();
+    }
+    //if ($('input[name="infer"]:checked').val() === "tag"){
+        if ($("#kw").val()){
+            q.kw = $("#kw").val();
+        }
+    //}
 
    return q;
 };
