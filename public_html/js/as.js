@@ -190,7 +190,6 @@ var IllGridfsGet = function(db, user, pwd, gridCol, marker, cb_done, cb_fail){
 };
 
 var soundTag = function(data, marker){
-    var audioCtx = new AudioContext();
     audioCtx.decodeAudioData(data, function(buf){
             // Play the sound
             var source = audioCtx.createBufferSource();
