@@ -32,19 +32,49 @@ THE SOFTWARE.
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD5NvcrQ54Rbzdxpo3FtJsAyvUjy6O3cn4&sensor=false">
         </script>
         <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
-        <script src="js/illiad.min.js"></script>
         <script src="js/jquery-ajax-blob-arraybuffer.js"></script>
         <script src="js/oms.min.js"></script>
         <script src="js/math.min.js"></script>
-        <script src="js/utilities.js"></script>
+        <script src="js/as.js"></script>
+        <script src="js/PredModel.js"></script>
 
         <script>
             //window.open("https://acoustic.ifp.illinois.edu:8081");
-            var gLoc;
             var map;
             var oms;
-            var iw = new google.maps.InfoWindow();
-            var audioCtx = new AudioContext();
+            var iw;
+            var marker;
+            
+            $(function(){
+                var gLoc = [$('#lat').val(), $('#lng').val()];
+                
+                var mapProp = {
+                    center:new google.maps.LatLng(gLoc[0], gLoc[1]),
+                    zoom:5,
+                    mapTypeId:google.maps.MapTypeId.ROADMAP
+                };
+                map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+                iw=new google.maps.InfoWindow();
+                oms=new OverlappingMarkerSpiderfier(map);
+                
+                oms.addListener('click', function(marker) {
+                    // Download sound data and play
+                    IllGridfsGet('publicDb', 'publicUser', 'publicPwd', 'data', marker.filename, 
+                    soundTag, function(){
+                        alert("No data found!");
+                    });
+                });
+                
+                var currDate = new Date();
+                var prevDate = new Date(currDate);
+                prevDate.setDate(prevDate.getDate()-1);
+                $("#t1").val(prevDate.toISOString());
+                $("#t2").val(currDate.toISOString());
+                setInterval(function(){
+                    var d = new Date();
+                    document.getElementById('time').innerHTML = 'Time '+d.toISOString();
+                },1000);
+            });
             
             /**
              * acousticSearch
@@ -66,128 +96,44 @@ THE SOFTWARE.
                         q.kw = $("#kw").val();
                     }
                 }
-                else if ($('input[name="infer"]:checked').val() === "pred"){
-                    var model = getPredModel();
-                }
                 
                 // Query events
-                IllQueryCol('publicDb', 'publicUser', 'publicPwd', 'event', q, function(events){
-                    for (var j = 0; j <events.length;j++){
-                        // Use model to augment score
-                        if (model){
-                            var feat = [];
-                            for (var i=0; i < model.mu.length; i++){
-                                feat.push(0);
+                IllQueryPost('publicDb', 'publicUser', 'publicPwd', 'event', q, function(events){
+                    var model = new PredModel();
+                    if ($("#classes").val()){
+                        model.fromClass($("#classes").val(), function(model){
+                            for (var j = 0; j <events.length;j++){
+                                // Use model to augment score    
+                                var feat = [];
+                                for (var i=0; i < model.mu.length; i++){
+                                    feat.push(0);
+                                }
+                                var rArr = Object.keys(events[j].TFRidge); // ridge indexes
+                                for (var i=0;i < rArr.length; i++){
+                                    var f = events[j].TFRidge[rArr[i]].freq;
+                                    feat[i] = math.mean(f);
+                                    feat[i+5] = math.std(f);
+                                }
+                                for (var i=0;i< rArr.length; i++){
+                                    var t = events[j].TFRidge[rArr[i]].time;
+                                    var d = math.subtract(t,math.min(t)); // duration
+                                    feat[model.mu.length/2+i] = math.mean(d);
+                                    feat[model.mu.length/2+i+5] = math.std(d);
+                                }
+                                events[j].score = math.min(math.sum(events[j].logProb),10e3)*model.predict(model, feat);
                             }
-                            var rArr = Object.keys(events[j].TFRidge); // ridge indexes
-                            for (var i=0;i < rArr.length; i++){
-                                var f = events[j].TFRidge[rArr[i]].freq;
-                                feat[i] = math.mean(f);
-                                feat[i+5] = math.std(f);
-                            }
-                            for (var i=0;i< rArr.length; i++){
-                                var t = events[j].TFRidge[rArr[i]].time;
-                                var d = math.subtract(t,math.min(t)); // duration
-                                feat[model.mu.length/2+i] = math.mean(d);
-                                feat[model.mu.length/2+i+5] = math.std(d);
-                            }
-                            events[j].score = math.min(math.sum(events[j].logProb),10e3)*model.predict(model, feat);
-                        }
-                        else{
-                            events[j].score = math.min(math.sum(events[j].logProb),15e3);
-                        }
-                    }
-                    // sort events based on score
-                    events.sort(function(a, b) {
-                            return -a.score + b.score;
-                    });
-                    for (var i = 0; i <events.length;i++){
-                        // Create a marker for each event
-                        var marker = new google.maps.Marker({
-                            position:new google.maps.LatLng(parseFloat(events[i].location.coordinates[1]), parseFloat(events[i].location.coordinates[0])),
-                            score: events[i].score,
-                            tag: events[i].tag,
-                            recordDate: events[i].recordDate.$date,
-                            filename: events[i].filename,
-                            icon:'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld='+ (i) +'|FF776B|000000'
-                        });
-                        marker.setMap(map);
+                            // sort events based on score
+                            events.sort(function(a, b) {
+                                    return -a.score + b.score;
+                            });
 
-                        google.maps.event.addListener(marker, 'mouseover', (function(marker) {
-                            return function(){
-                                iw.setContent("<p>"+marker.recordDate+"<br>"+marker.score+"<br>"+marker.tag+"</p>");
-                                iw.open(map, marker);
-                            };
-                        })(marker));
-                        google.maps.event.addListener(marker, 'mouseout', function(){
-                            iw.close();
+                            displayEvent(events);
                         });
-                        oms.addMarker(marker);
                     }
                 }, function(){
                     alert("No event found!");
                 });
             }
-            
-            $(function(){
-                gLoc = [$('#lat').val(), $('#lng').val()];
-                
-                var mapProp = {
-                    center:new google.maps.LatLng(gLoc[0], gLoc[1]),
-                    zoom:5,
-                    mapTypeId:google.maps.MapTypeId.ROADMAP
-                };
-                map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
-                oms=new OverlappingMarkerSpiderfier(map);
-                
-                oms.addListener('click', function(marker) {
-                    // Download sound data and play
-                    IllDownGrid('publicDb', 'publicUser', 'publicPwd', 'data', marker.filename, function(data){
-                        audioCtx.decodeAudioData(data, function(buf){
-                            // Play the sound
-                            var source = audioCtx.createBufferSource();
-                            source.buffer = buf;
-                            source.connect(audioCtx.destination);
-                            source.start(0);
-                            
-                            // if pred for speech, then invoke ASR (auto speech recog) service for init help
-                            /*
-                            var ASR_result = '';
-                            if ($('input[name="infer"]:checked').val() === "pred" && $("#classes").val() === "speech"){
-                                gVoiceApi('AIzaSyD5NvcrQ54Rbzdxpo3FtJsAyvUjy6O3cn4', data, function(xscript){
-                                    ASR_result = ' ';
-                                    for (var i = 0; i < xscript[2].result[1].alternative.length; i++){
-                                        ASR_result = ASR_result+xscript[2].result[1].alternative[i].transcript;
-                                    }
-                                }, function(){
-                                    console.log('ASR failed');
-                                });
-                            }
-                            */
-                            // Get updated tags from the user
-                            var newtag = prompt("Modify tags", marker.tag);
-                            if (newtag || marker.tag){
-                                IllUpdateCol('publicDb', 'publicUser', 'publicPwd', 'event',marker.filename, "set", '{tag:"'+newtag+'"}');
-                                marker.tag = newtag;
-                            }
-                        }, function(error){
-                            console.log('audio decoding error');
-                        });
-                    }, function(){
-                        alert("No data found!");
-                    });
-                });
-                
-                var currDate = new Date();
-                var prevDate = new Date(currDate);
-                prevDate.setDate(prevDate.getDate()-1);
-                $("#t1").val(prevDate.toISOString());
-                $("#t2").val(currDate.toISOString());
-                setInterval(function(){
-                    var d = new Date();
-                    document.getElementById('time').innerHTML = 'Time '+d.toISOString();
-                },1000);
-            });
             
         </script>
         <!-- Basic CSS -->
