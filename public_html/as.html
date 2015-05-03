@@ -43,7 +43,6 @@ THE SOFTWARE.
             var map;
             var oms;
             var iw;
-            var marker;
             
             $(function(){
                 var gLoc = [$('#lat').val(), $('#lng').val()];
@@ -59,7 +58,7 @@ THE SOFTWARE.
                 
                 oms.addListener('click', function(marker) {
                     // Download sound data and play
-                    IllGridfsGet('publicDb', 'publicUser', 'publicPwd', 'data', marker.filename, 
+                    IllGridfsGet('publicDb', 'publicUser', 'publicPwd', 'data', marker, 
                     soundTag, function(){
                         alert("No data found!");
                     });

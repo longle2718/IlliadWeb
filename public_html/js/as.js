@@ -141,7 +141,7 @@ var IllQueryPost = function (db, user, pwd, col, q, cb_done, cb_fail){
 var displayEvent = function(events){
     for (var i = 0; i <events.length;i++){
         // Create a marker for each event
-        marker = new google.maps.Marker({
+        var marker = new google.maps.Marker({
                         position:new google.maps.LatLng(parseFloat(events[i].location.coordinates[1]), parseFloat(events[i].location.coordinates[0])),
                         score: events[i].score,
                         tag: events[i].tag,
@@ -164,8 +164,8 @@ var displayEvent = function(events){
     }
 };
 
-var IllGridfsGet = function(db, user, pwd, gridCol, filename, cb_done, cb_fail){
-    var queryString = $.param({'user':user, 'passwd': pwd, 'filename': filename});
+var IllGridfsGet = function(db, user, pwd, gridCol, marker, cb_done, cb_fail){
+    var queryString = $.param({'user':user, 'passwd': pwd, 'filename': marker.filename});
     
     $.ajax({
         url: 'https://acoustic.ifp.illinois.edu:8081/gridfs/'+db+'/'+gridCol+'?'+queryString,
@@ -177,14 +177,14 @@ var IllGridfsGet = function(db, user, pwd, gridCol, filename, cb_done, cb_fail){
         }
     }).done(function(data){
         console.log(data.byteLength);
-        cb_done(data);
+        cb_done(data, marker);
     }).fail(function(){
         console.log('ajax fail');
         cb_fail();
     });
 };
 
-var soundTag = function(data){
+var soundTag = function(data, marker){
     var audioCtx = new AudioContext();
     audioCtx.decodeAudioData(data, function(buf){
             // Play the sound
