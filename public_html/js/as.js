@@ -144,6 +144,12 @@ var IllQueryPost = function (db, user, pwd, col, q, cb_done, cb_fail){
 };
 
 var displayEvent = function(events){
+    var markers = oms.getMarkers();
+    for (var i = 0; i <markers.length;i++){
+        markers[i].setMap(null);
+    }
+    oms.clearMarkers();
+                
     for (var i = 0; i <events.length;i++){
         // Create a marker for each event
         var marker = new google.maps.Marker({

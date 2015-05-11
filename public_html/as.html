@@ -82,12 +82,6 @@ THE SOFTWARE.
              * @returns {none}
              */
             var acousticSearch = function (){
-                var markers = oms.getMarkers();
-                for (var i = 0; i <markers.length;i++){
-                    markers[i].setMap(null);
-                }
-                oms.clearMarkers();
-                
                 var q = getBasicQuery();
                 
                 // Query events
