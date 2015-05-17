@@ -29,7 +29,10 @@ THE SOFTWARE.
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <script
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD5NvcrQ54Rbzdxpo3FtJsAyvUjy6O3cn4&sensor=false">
+            src="//maps.googleapis.com/maps/api/js?key=AIzaSyD5NvcrQ54Rbzdxpo3FtJsAyvUjy6O3cn4&sensor=false">
+        </script>
+        <script 
+            src="//www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1','packages':['corechart']}]}">
         </script>
         <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
         <script src="js/jquery-ajax-blob-arraybuffer.js"></script>
@@ -43,9 +46,12 @@ THE SOFTWARE.
             var map;
             var oms;
             var iw;
+            var chart;
+            var dataTable;
             var audioCtx = new AudioContext(); // should only have 1 per doc
             
             $(function(){
+                // space visualization
                 var gLoc = [$('#lat').val(), $('#lng').val()];
                 
                 var mapProp = {
@@ -65,10 +71,35 @@ THE SOFTWARE.
                     });
                 });
 
+                // time visualization
+                chart = new google.visualization.LineChart(document.getElementById('googleChart'));
+                dataTable = new google.visualization.DataTable();
+                dataTable.addColumn('date', 'Date');
+                dataTable.addColumn('number', 'Score');
+                dataTable.addColumn({type:'string', role:'annotation'});
+                dataTable.addColumn({type:'string', role:'tooltip'});
+                dataTable.addColumn('string', 'filename');
+                dataTable.addColumn('string', 'tag');
+                
+                google.visualization.events.addListener(chart, 'select', function(){
+                    var marker = {};
+                    var selectedItem = chart.getSelection()[0];
+                    if (selectedItem) {
+                        marker.filename= dataTable.getValue(selectedItem.row, 4);
+                        marker.tag= dataTable.getValue(selectedItem.row, 5);
+                        // Download sound data and play
+                        IllGridfsGet('publicDb', 'publicUser', 'publicPwd', 'data', marker, 
+                        soundTag, function(){
+                            alert("No data found!");
+                        });
+                    }
+                });
+
+                // interactive display
                 var currDate;
                 setInterval(function(){
                     currDate = new Date();
-                    document.getElementById('time').innerHTML = 'Time '+currDate.toISOString();
+                    $("#time").val('Time '+currDate.toISOString());
                 },1000);
                 setInterval(function(){
                     var prevDate = new Date(currDate);
@@ -129,9 +160,16 @@ THE SOFTWARE.
         <style>
             #googleMap {
                 width: 85%;
-                height: 100%;
+                height: 75%;
                 position: absolute;
-                background: #000;
+                background: #000000;
+            }
+            #googleChart{
+                bottom: 0;
+                width: 85%;
+                height: 20%;
+                position: absolute;
+                background: #FFFFFF;
             }
             #forms{
                 position: absolute;
@@ -148,6 +186,8 @@ THE SOFTWARE.
     <body>
         <div id="googleMap"></div>
 
+        <div id="googleChart"></div>
+        
         <p id="t1" hidden></p>
         <p id="t2" hidden></p>
         
