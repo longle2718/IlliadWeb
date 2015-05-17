@@ -184,6 +184,7 @@ var displayEvent = function(events){
         lineWidth: 0,
         pointSize: 5,
         hAxis: {
+            title: 'Local time',
             format: 'yyyy/MM/dd HH:mm:SSSS',
             gridlines: {count: -1}
         },
