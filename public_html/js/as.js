@@ -149,7 +149,13 @@ var displayEvent = function(events){
         markers[i].setMap(null);
     }
     oms.clearMarkers();
-                
+    
+    
+    var dataTable = new google.visualization.DataTable();
+    dataTable.addColumn('date', 'Date');
+    dataTable.addColumn('number', 'Score');
+    dataTable.addColumn({type:'string', role:'annotation'});
+    dataTable.addColumn({type:'string', role:'tooltip'});
     for (var i = 0; i <events.length;i++){
         // Create a marker for each event
         var marker = new google.maps.Marker({
@@ -158,7 +164,7 @@ var displayEvent = function(events){
                         tag: events[i].tag,
                         recordDate: events[i].recordDate.$date,
                         filename: events[i].filename,
-                        icon:'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld='+ (i) +'|FF776B|000000'
+                        icon:'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld='+ (i) +'|FFFFFF'
         });
         marker.setMap(map);
 
@@ -172,7 +178,26 @@ var displayEvent = function(events){
                         iw.close();
         });
         oms.addMarker(marker);
+        
+        // A row in the dataTable for each event
+        dataTable.addRows([
+            [new Date(events[i].recordDate.$date), events[i].score, i.toString(), marker.recordDate+"\n"+marker.score+"\n"+marker.tag]
+        ]);
     }
+    var options = {
+        legend: 'none',
+        lineWidth: 0,
+        pointSize: 5,
+        hAxis: {
+            format: 'yyyy/MM/dd HH:mm:SSSS',
+            gridlines: {count: -1}
+        },
+        vAxis: {
+            gridlines: {color: 'none'},
+            minValue: 0
+        }
+    };
+    chart.draw(dataTable, options);
 };
 
 var IllGridfsGet = function(db, user, pwd, gridCol, marker, cb_done, cb_fail){
