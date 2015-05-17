@@ -45,6 +45,7 @@ THE SOFTWARE.
             //window.open("https://acoustic.ifp.illinois.edu:8081");
             var map;
             var chart;
+            var dataTable;
             var oms;
             var iw;
             var audioCtx = new AudioContext(); // should only have 1 per doc
@@ -71,12 +72,26 @@ THE SOFTWARE.
                 
                 // time visualization
                 chart = new google.visualization.LineChart(document.getElementById('googleChart'));
+                dataTable = new google.visualization.DataTable();
+                dataTable.addColumn('date', 'Date');
+                dataTable.addColumn('number', 'Score');
+                dataTable.addColumn({type:'string', role:'annotation'});
+                dataTable.addColumn({type:'string', role:'tooltip'});
+                dataTable.addColumn('string', 'filename');
+                dataTable.addColumn('string', 'tag');
+                
                 google.visualization.events.addListener(chart, 'select', function(){
-                    // Download sound data and play
-                    IllGridfsGet('publicDb', 'publicUser', 'publicPwd', 'data', marker, 
-                    soundTag, function(){
-                        alert("No data found!");
-                    });
+                    var marker = {};
+                    var selectedItem = chart.getSelection()[0];
+                    if (selectedItem) {
+                        marker.filename= dataTable.getValue(selectedItem.row, 4);
+                        marker.tag= dataTable.getValue(selectedItem.row, 5);
+                        // Download sound data and play
+                        IllGridfsGet('publicDb', 'publicUser', 'publicPwd', 'data', marker, 
+                        soundTag, function(){
+                            alert("No data found!");
+                        });
+                    }
                 });
 
                 // interactive display

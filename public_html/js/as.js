@@ -149,13 +149,8 @@ var displayEvent = function(events){
         markers[i].setMap(null);
     }
     oms.clearMarkers();
+    dataTable.removeRows(0, dataTable.getNumberOfRows());
     
-    
-    var dataTable = new google.visualization.DataTable();
-    dataTable.addColumn('date', 'Date');
-    dataTable.addColumn('number', 'Score');
-    dataTable.addColumn({type:'string', role:'annotation'});
-    dataTable.addColumn({type:'string', role:'tooltip'});
     for (var i = 0; i <events.length;i++){
         // Create a marker for each event
         var marker = new google.maps.Marker({
@@ -181,7 +176,7 @@ var displayEvent = function(events){
         
         // A row in the dataTable for each event
         dataTable.addRows([
-            [new Date(events[i].recordDate.$date), events[i].score, i.toString(), marker.recordDate+"\n"+marker.score+"\n"+marker.tag]
+            [new Date(events[i].recordDate.$date), events[i].score, i.toString(), marker.recordDate+"\n"+marker.score+"\n"+marker.tag, events[i].filename, events[i].tag]
         ]);
     }
     var options = {
@@ -193,11 +188,14 @@ var displayEvent = function(events){
             gridlines: {count: -1}
         },
         vAxis: {
+            title: 'Score',
             gridlines: {color: 'none'},
             minValue: 0
         }
     };
-    chart.draw(dataTable, options);
+    var view = new google.visualization.DataView(dataTable);
+    view.setColumns([0,1,2,3]);
+    chart.draw(view, options);
 };
 
 var IllGridfsGet = function(db, user, pwd, gridCol, marker, cb_done, cb_fail){
