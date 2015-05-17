@@ -177,7 +177,7 @@ var displayEvent = function(events){
         
         // A row in the dataTable for each event
         dataTable.addRows([
-            [new Date(events[i].recordDate.$date), events[i].score, i.toString(), marker.recordDate+"\n"+marker.score+"\n"+marker.tag, events[i].filename, events[i].tag]
+            [new Date(marker.recordDate), marker.score, i.toString(), marker.recordDate+"\n"+marker.score+"\n"+marker.tag, marker.filename, marker.tag]
         ]);
     }
     var options = {
