@@ -159,7 +159,8 @@ var displayEvent = function(events){
                         tag: events[i].tag,
                         recordDate: events[i].recordDate.$date,
                         filename: events[i].filename,
-                        icon:'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld='+ (i) +'|FFFFFF'
+                        icon:'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld='+ (i) +'|'
+                                +num2hexcolor(events[i].score)+'|FFFFFF' // fill color|text color
         });
         marker.setMap(map);
 
@@ -197,6 +198,21 @@ var displayEvent = function(events){
     var view = new google.visualization.DataView(dataTable);
     view.setColumns([0,1,2,3]);
     chart.draw(view, options);
+};
+
+var num2hexcolor = function(val){
+    var max = 2.5e3;
+    var min = 0;
+    // cap the input value
+    if (val > max)
+        val = max;
+    else if (val < min)
+        val = min;
+    // the 5 color heatmap algorithm
+    h = math.round((1.0 - val/max) * 100);
+    l = math.round(val/max*50);
+    var color = tinycolor("hsl("+h+"%, 100%, "+l+"%)");
+    return color.toHex();
 };
 
 var IllGridfsGet = function(db, user, pwd, gridCol, marker, cb_done, cb_fail){
