@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-var remoteAddr = window.location.protocol+'//'+ window.location.host;
+var remoteAddr = window.location.protocol+'//'+ window.location.hostname+':8081';
 
 var getBasicQuery = function (){
     var q = {
