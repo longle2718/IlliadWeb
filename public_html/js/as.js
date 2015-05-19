@@ -21,6 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+var remoteAddr = window.location.protocol+'//'+ window.location.host;
+
 var getBasicQuery = function (){
     var q = {
         t1: $("#t1").val(),
@@ -129,7 +131,7 @@ var IllQueryPost = function (db, user, pwd, col, q, cb_done, cb_fail){
     var postDat = '{$and:['+timeDat+freqDat+durDat+lpDat+locDat+kwDat+']}';
     
     $.ajax({
-        url: 'https://acoustic.ifp.illinois.edu:8081/query?'+queryString,
+        url: remoteAddr+'/query?'+queryString,
         type:'POST',
         data: postDat,
         dataType: 'text',
@@ -204,7 +206,7 @@ var IllGridfsGet = function(db, user, pwd, gridCol, marker, cb_done, cb_fail){
     var queryString = $.param({'user':user, 'passwd': pwd, 'filename': marker.filename});
     
     $.ajax({
-        url: 'https://acoustic.ifp.illinois.edu:8081/gridfs/'+db+'/'+gridCol+'?'+queryString,
+        url: remoteAddr+'/gridfs/'+db+'/'+gridCol+'?'+queryString,
         type:'GET',
         dataType :'arraybuffer',
         timeOut: 10000,
@@ -274,7 +276,7 @@ var IllWritePost = function(db, user, pwd, col, filename, op, field){
     var queryString = $.param({'dbname':db, 'colname':col, 'user':user, 'passwd': pwd});
     
     $.ajax({
-        url: 'https://acoustic.ifp.illinois.edu:8081/write?'+queryString,
+        url: remoteAddr+'/write?'+queryString,
         type:'POST',
         data: '{filename:"'+filename+'"}\n{$'+op+':'+field+'}',
         dataType: 'text',
