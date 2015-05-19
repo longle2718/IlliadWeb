@@ -67,10 +67,7 @@ THE SOFTWARE.
                 
                 oms.addListener('click', function(marker) {
                     // Download sound data and play
-                    IllGridfsGet('publicDb', 'publicUser', 'publicPwd', 'data', marker, 
-                    soundTag, function(){
-                        alert("No data found!");
-                    });
+                    IllGridfsGet('publicDb', 'publicUser', 'publicPwd', 'data', marker, soundPlayTag, soundTag);
                 });
 
                 // time visualization
@@ -105,10 +102,7 @@ THE SOFTWARE.
                         marker.filename= dataTable.getValue(selectedItem.row, 4);
                         marker.tag= dataTable.getValue(selectedItem.row, 5);
                         // Download sound data and play
-                        IllGridfsGet('publicDb', 'publicUser', 'publicPwd', 'data', marker, 
-                        soundTag, function(){
-                            alert("No data found!");
-                        });
+                        IllGridfsGet('publicDb', 'publicUser', 'publicPwd', 'data', marker, soundPlayTag, soundTag);
                     }
                 });
 

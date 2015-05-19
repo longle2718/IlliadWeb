@@ -216,11 +216,11 @@ var IllGridfsGet = function(db, user, pwd, gridCol, marker, cb_done, cb_fail){
         cb_done(data, marker);
     }).fail(function(){
         console.log('ajax fail');
-        cb_fail();
+        cb_fail(marker);
     });
 };
 
-var soundTag = function(data, marker){
+var soundPlayTag = function(data, marker){
     audioCtx.decodeAudioData(data, function(buf){
             // Play the sound
             var source = audioCtx.createBufferSource();
@@ -243,15 +243,31 @@ var soundTag = function(data, marker){
             }
             */
 
-            // Get updated tags from the user
-            var newtag = prompt("Modify tags", marker.tag);
-            if (newtag || marker.tag){
-                            IllWritePost('publicDb', 'publicUser', 'publicPwd', 'event',marker.filename, "set", '{tag:"'+newtag+'"}');
-                            marker.tag = newtag;
-            }
+            soundTag(marker);
     }, function(error){
                     console.log('audio decoding error');
     });
+};
+
+var soundTag = function(marker){
+    // Get updated tags from the user
+    var newtag = prompt("Modify tags", marker.tag);
+    if (newtag || marker.tag){
+        IllWritePost('publicDb', 'publicUser', 'publicPwd', 'event',marker.filename, "set", '{tag:"'+newtag+'"}');
+        marker.tag = newtag;
+        if (marker.selectedItem){
+            var tt = dataTable.getValue(marker.selectedItem.row, 3);
+            var tt_lines = tt.split('\n');
+            tt_lines[2] = marker.tag;
+            
+            dataTable.setValue(marker.selectedItem.row, 3, tt_lines.join('\n'));
+            dataTable.setValue(marker.selectedItem.row, 5, marker.tag);
+            
+            var view = new google.visualization.DataView(dataTable);
+            view.setColumns([0,1,2,3]);
+            chart.draw(view, chartOptions);
+        }
+    }
 };
 
 var IllWritePost = function(db, user, pwd, col, filename, op, field){
