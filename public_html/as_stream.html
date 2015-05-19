@@ -99,6 +99,7 @@ THE SOFTWARE.
                     var marker = {};
                     var selectedItem = chart.getSelection()[0];
                     if (selectedItem) {
+                        marker.selectedItem = selectedItem;
                         marker.filename= dataTable.getValue(selectedItem.row, 4);
                         marker.tag= dataTable.getValue(selectedItem.row, 5);
                         // Download sound data and play
