@@ -180,24 +180,9 @@ var displayEvent = function(events){
             [new Date(marker.recordDate), marker.score, i.toString(), marker.recordDate+"\n"+marker.score+"\n"+marker.tag, marker.filename, marker.tag]
         ]);
     }
-    var options = {
-        legend: 'none',
-        lineWidth: 0,
-        pointSize: 5,
-        hAxis: {
-            title: 'Local time',
-            format: 'yyyy/MM/dd HH:mm:SSSS',
-            gridlines: {count: -1}
-        },
-        vAxis: {
-            title: 'Score',
-            gridlines: {color: 'none'},
-            minValue: 0
-        }
-    };
     var view = new google.visualization.DataView(dataTable);
     view.setColumns([0,1,2,3]);
-    chart.draw(view, options);
+    chart.draw(view, chartOptions);
 };
 
 var num2hexcolor = function(val){

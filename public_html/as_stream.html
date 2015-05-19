@@ -48,6 +48,7 @@ THE SOFTWARE.
             var oms;
             var iw;
             var chart;
+            var chartOptions;
             var dataTable;
             var audioCtx = new AudioContext(); // should only have 1 per doc
             
@@ -74,6 +75,21 @@ THE SOFTWARE.
 
                 // time visualization
                 chart = new google.visualization.LineChart(document.getElementById('googleChart'));
+                chartOptions = {
+                    legend: 'none',
+                    lineWidth: 0,
+                    pointSize: 5,
+                    hAxis: {
+                        title: 'Local time',
+                        format: 'yyyy/MM/dd HH:mm:SSSS',
+                        gridlines: {count: -1}
+                    },
+                    vAxis: {
+                        title: 'Score',
+                        gridlines: {color: 'none'},
+                        minValue: 0
+                    }
+                };
                 dataTable = new google.visualization.DataTable();
                 dataTable.addColumn('date', 'Date');
                 dataTable.addColumn('number', 'Score');
