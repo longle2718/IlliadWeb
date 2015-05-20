@@ -69,66 +69,66 @@ var IllQueryPost = function (db, user, pwd, col, q, cb_done, cb_fail){
     
     // Construct the query data to send
     if (q.hasOwnProperty('t1') && q.hasOwnProperty('t2')){
-        timeDat = '{recordDate:{$gte:{$date:"'+ q.t1+'"}, $lte:{$date:"'+q.t2+'"}}}';
+        timeDat = '{"recordDate":{"$gte":{"$date":"'+ q.t1+'"}, "$lte":{"$date":"'+q.t2+'"}}}';
     }
     else if (q.hasOwnProperty('t1')){
-        timeDat = '{recordDate:{$gte:{$date:"'+ q.t1+'"}}}';
+        timeDat = '{"recordDate":{"$gte":{"$date":"'+ q.t1+'"}}}';
     }
     else if (q.hasOwnProperty('t2')){
-        timeDat = '{recordDate:{$lte:{$date:"'+ q.t2+'"}}}';
+        timeDat = '{"recordDate":{"$lte":{"$date":"'+ q.t2+'"}}}';
     }
     
     if (q.hasOwnProperty('f1') && q.hasOwnProperty('f2')){
-        freqDat = ',{minFreq:{$gte:'+q.f1+'}},{maxFreq:{$lte:'+q.f2+'}}';
+        freqDat = ',{"minFreq":{"$gte":'+q.f1+'}},{"maxFreq":{"$lte":'+q.f2+'}}';
     }
     else if (q.hasOwnProperty('f1')){
-        freqDat = ',{minFreq:{$gte:'+q.f1+'}}';
+        freqDat = ',{"minFreq":{"$gte":'+q.f1+'}}';
     }else if (q.hasOwnProperty('f2')){
-        freqDat = ',{maxFreq:{$lte:'+q.f2+'}}';
+        freqDat = ',{"maxFreq":{"$lte":'+q.f2+'}}';
     }else{
         freqDat = '';
     }
     
     if (q.hasOwnProperty('dur1') && q.hasOwnProperty('dur2')){
-        durDat = ',{duration:{$gte:'+q.dur1+', $lte:'+q.dur2+'}}';
+        durDat = ',{"duration":{"$gte":'+q.dur1+', "$lte":'+q.dur2+'}}';
     }
     else if (q.hasOwnProperty('dur1')){
-        durDat = ',{duration:{$gte:'+q.dur1+'}}';
+        durDat = ',{"duration":{"$gte":'+q.dur1+'}}';
     }
     else if (q.hasOwnProperty('dur2')){
-        durDat = ',{duration:{$lte:'+q.dur2+'}}';
+        durDat = ',{"duration":{"$lte":'+q.dur2+'}}';
     }
     else{
         durDat = '';
     }
     
     if (q.hasOwnProperty('lp1') && q.hasOwnProperty('lp2')){
-        lpDat = ',{logProb:{$gte:'+q.lp1+', $lte:'+q.lp2+'}}';
+        lpDat = ',{"logProb":{"$gte":'+q.lp1+', "$lte":'+q.lp2+'}}';
     }
     else if (q.hasOwnProperty('lp1')){
-        lpDat = ',{logProb:{$gte:'+q.lp1+'}}';
+        lpDat = ',{"logProb":{"$gte":'+q.lp1+'}}';
     }
     else if (q.hasOwnProperty('lp2')){
-        lpDat = ',{logProb:{$lte:'+q.lp2+'}}';
+        lpDat = ',{"logProb":{"$lte":'+q.lp2+'}}';
     }
     else{
         lpDat = '';
     }
     
     if (q.hasOwnProperty('loc') && q.hasOwnProperty('rad')){
-        locDat = ',{location:{$geoWithin:{$centerSphere:[['+q.loc[1]+','+q.loc[0]+'], '+q.rad/earthRad+']}}}';
+        locDat = ',{"location":{"$geoWithin":{"$centerSphere":[['+q.loc[1]+','+q.loc[0]+'], '+q.rad/earthRad+']}}}';
     }else{
         locDat = '';
     }
     
     if (q.hasOwnProperty('kw')){
-        kwDat = ',{$text: {$search:"'+q.kw+'"}}';
+        kwDat = ',{"$text": {"$search":"'+q.kw+'"}}';
     }else{
         kwDat = '';
     }
     
     // FIX: memcached key is too long
-    var postDat = '{$and:['+timeDat+freqDat+durDat+lpDat+locDat+kwDat+']}';
+    var postDat = '{"$and":['+timeDat+freqDat+durDat+lpDat+locDat+kwDat+']}';
     
     $.ajax({
         url: remoteAddr+'/query?'+queryString,
@@ -255,7 +255,7 @@ var soundTag = function(marker){
     // Get updated tags from the user
     var newtag = prompt("Modify tags", marker.tag);
     if (newtag || marker.tag){
-        IllWritePost('publicDb', 'publicUser', 'publicPwd', 'event',marker.filename, "set", '{tag:"'+newtag+'"}');
+        IllWritePost('publicDb', 'publicUser', 'publicPwd', 'event',marker.filename, "set", '{"tag":"'+newtag+'"}');
         marker.tag = newtag;
         if (marker.selectedItem){
             var tt = dataTable.getValue(marker.selectedItem.row, 3);
@@ -278,7 +278,7 @@ var IllWritePost = function(db, user, pwd, col, filename, op, field){
     $.ajax({
         url: remoteAddr+'/write?'+queryString,
         type:'POST',
-        data: '{filename:"'+filename+'"}\n{$'+op+':'+field+'}',
+        data: '{"filename":"'+filename+'"}\n{"$'+op+'":'+field+'}',
         dataType: 'text',
         timeOut: 10000,
         xhrFields: {
