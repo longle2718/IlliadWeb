@@ -153,6 +153,9 @@ var displayEvent = function(events){
     oms.clearMarkers();
     dataTable.removeRows(0, dataTable.getNumberOfRows());
     
+    
+    var maxScore = math.max(events.map(function(o){return o.score;}));
+    var minScore = math.min(events.map(function(o){return o.score;}));
     for (var i = 0; i <events.length;i++){
         // Create a marker for each event
         var marker = new google.maps.Marker({
@@ -162,7 +165,7 @@ var displayEvent = function(events){
                         recordDate: events[i].recordDate.$date,
                         filename: events[i].filename,
                         icon:'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld='+ (i) +'|'
-                                +num2hexcolor(events[i].score)+'|FFFFFF' // fill color|text color
+                                +num2hexcolor(events[i].score, minScore, maxScore)+'|FFFFFF' // fill color|text color
         });
         marker.setMap(map);
 
@@ -187,9 +190,7 @@ var displayEvent = function(events){
     chart.draw(view, chartOptions);
 };
 
-var num2hexcolor = function(val){
-    var max = 2.5e3;
-    var min = 0;
+var num2hexcolor = function(val, min, max){
     // cap the input value
     if (val > max)
         val = max;
