@@ -92,6 +92,12 @@ PredModel.prototype = {
             case 'speech':
                 jsonFile = "data/speech.json";
                 break;
+            case 'whistle':
+                jsonFile = "data/whistle.json";
+                break;
+            case 'finger_snap':
+                jsonFile = "data/finger_snap.json";
+                break;
             default:
                 break;
         }
