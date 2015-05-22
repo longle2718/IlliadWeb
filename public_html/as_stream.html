@@ -113,13 +113,16 @@ THE SOFTWARE.
                     currDate = new Date();
                     $("#time").val('Time '+currDate.toISOString());
                 },1000);
-                setInterval(function(){
+                
+                var recurFun;
+                (recurFun = function(){
                     var prevDate = new Date(currDate);
                     prevDate.setTime(prevDate.getTime() - $("#winlen").val());
                     $("#t1").val(prevDate.toISOString());
                     $("#t2").val(currDate.toISOString());
                     acousticSearch();
-                }, $("#period").val());
+                    setTimeout(recurFun, $("#period").val());
+                })();
             });
             
             /**
