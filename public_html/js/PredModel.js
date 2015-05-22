@@ -92,13 +92,20 @@ PredModel.prototype = {
             case 'speech':
                 jsonFile = "data/speech.json";
                 break;
+            default:
+                break;
         }
-        // save this PredModel to distinguish it from the "this" in getJSON's callback
-        var _this = this;
-        $.getJSON(jsonFile, function(json){
-            _this.fromJSON(json);
-            cb(_this);
-        });
+        
+        if (typeof jsonFile === 'undefined'){
+            cb(this);
+        } else{
+            // save this PredModel to distinguish it from the "this" in getJSON's callback
+            var _this = this;
+            $.getJSON(jsonFile, function(json){
+                _this.fromJSON(json);
+                cb(_this);
+            });
+        }
     },
     fromJSON: function(json){
         this.alpha = json.alpha;

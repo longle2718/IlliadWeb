@@ -136,24 +136,28 @@ THE SOFTWARE.
                     if ($("#classes").val()){
                         model.fromClass($("#classes").val(), function(model){
                             for (var j = 0; j <events.length;j++){
-                                // Use model to augment score    
-                                var feat = [];
-                                for (var i=0; i < model.mu.length; i++){
-                                    feat.push(0);
+                                if (typeof model.mu === 'undefined'){
+                                    events[j].score = math.min(math.sum(events[j].logProb),10e3);
+                                } else{
+                                    // Use model to augment score    
+                                    var feat = [];
+                                    for (var i=0; i < model.mu.length; i++){
+                                        feat.push(0);
+                                    }
+                                    var rArr = Object.keys(events[j].TFRidge); // ridge indexes
+                                    for (var i=0;i < rArr.length; i++){
+                                        var f = events[j].TFRidge[rArr[i]].freq;
+                                        feat[i] = math.mean(f);
+                                        feat[i+5] = math.std(f);
+                                    }
+                                    for (var i=0;i< rArr.length; i++){
+                                        var t = events[j].TFRidge[rArr[i]].time;
+                                        var d = math.subtract(t,math.min(t)); // duration
+                                        feat[model.mu.length/2+i] = math.mean(d);
+                                        feat[model.mu.length/2+i+5] = math.std(d);
+                                    }
+                                    events[j].score = math.min(math.sum(events[j].logProb),10e3)*model.predict(model, feat);
                                 }
-                                var rArr = Object.keys(events[j].TFRidge); // ridge indexes
-                                for (var i=0;i < rArr.length; i++){
-                                    var f = events[j].TFRidge[rArr[i]].freq;
-                                    feat[i] = math.mean(f);
-                                    feat[i+5] = math.std(f);
-                                }
-                                for (var i=0;i< rArr.length; i++){
-                                    var t = events[j].TFRidge[rArr[i]].time;
-                                    var d = math.subtract(t,math.min(t)); // duration
-                                    feat[model.mu.length/2+i] = math.mean(d);
-                                    feat[model.mu.length/2+i+5] = math.std(d);
-                                }
-                                events[j].score = math.min(math.sum(events[j].logProb),10e3)*model.predict(model, feat);
                             }
                             // sort events based on score
                             events.sort(function(a, b) {
@@ -248,6 +252,7 @@ THE SOFTWARE.
                     <!-- <input type="radio" name="infer" value="pred">Predict<br> -->
                     <label class="label1">Predict</label>
                     <select id="classes">
+                        <option value="none">None</option>
                         <option value="speech">Speech</option>
                         <option value="cough">Cough</option>
                         <option value="air_conditioner">Air conditioner</option>
