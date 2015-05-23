@@ -110,7 +110,7 @@ THE SOFTWARE.
                 // interactive display
                 setInterval(function(){
                     var currDate = new Date();
-                    $("#time").val('Time '+currDate.toISOString());
+                    $("#time").html('Time '+currDate.toISOString());
                 },1000);
                 
                 var recurFun;

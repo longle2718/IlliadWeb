@@ -114,7 +114,7 @@ THE SOFTWARE.
                 $("#t2").val(currDate.toISOString());
                 setInterval(function(){
                     var d = new Date();
-                    $("#time").val('Time '+d.toISOString());
+                    $("#time").html('Time '+d.toISOString());
                 },1000);
             });
             
