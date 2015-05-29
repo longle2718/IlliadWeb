@@ -146,6 +146,9 @@ var IllQueryPost = function (db, user, pwd, col, q, cb_done, cb_fail){
 };
 
 var displayEvent = function(events){
+		if (events.length == 0)
+			return;
+		
     var markers = oms.getMarkers();
     for (var i = 0; i <markers.length;i++){
         markers[i].setMap(null);
