@@ -153,39 +153,39 @@ var displayEvent = function(events){
     oms.clearMarkers();
     dataTable.removeRows(0, dataTable.getNumberOfRows());
     
-    if (events.length == 0)
-        return;
     
-    var maxScore = math.max(events.map(function(o){return o.score;}));
-    var minScore = math.min(events.map(function(o){return o.score;}));
-    for (var i = 0; i <events.length;i++){
-        // Create a marker for each event
-        var marker = new google.maps.Marker({
-                        position:new google.maps.LatLng(parseFloat(events[i].location.coordinates[1]), parseFloat(events[i].location.coordinates[0])),
-                        score: events[i].score,
-                        tag: events[i].tag,
-                        recordDate: events[i].recordDate.$date,
-                        filename: events[i].filename,
-                        icon:'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld='+ (i) +'|'
-                                +num2hexcolor(events[i].score, minScore, maxScore)+'|FFFFFF' // fill color|text color
-        });
-        marker.setMap(map);
+    if (events.length > 0){
+        var maxScore = math.max(events.map(function(o){return o.score;}));
+        var minScore = math.min(events.map(function(o){return o.score;}));
+        for (var i = 0; i <events.length;i++){
+            // Create a marker for each event
+            var marker = new google.maps.Marker({
+                            position:new google.maps.LatLng(parseFloat(events[i].location.coordinates[1]), parseFloat(events[i].location.coordinates[0])),
+                            score: events[i].score,
+                            tag: events[i].tag,
+                            recordDate: events[i].recordDate.$date,
+                            filename: events[i].filename,
+                            icon:'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld='+ (i) +'|'
+                                    +num2hexcolor(events[i].score, minScore, maxScore)+'|FFFFFF' // fill color|text color
+            });
+            marker.setMap(map);
 
-        google.maps.event.addListener(marker, 'mouseover', (function(marker) {
-                        return function(){
-                                        iw.setContent("<p>"+marker.recordDate+"<br>"+marker.score+"<br>"+marker.tag+"</p>");
-                                        iw.open(map, marker);
-                        };
-        })(marker));
-        google.maps.event.addListener(marker, 'mouseout', function(){
-                        iw.close();
-        });
-        oms.addMarker(marker);
-        
-        // A row in the dataTable for each event
-        dataTable.addRows([
-            [new Date(marker.recordDate), marker.score, i.toString(), marker.recordDate+"\n"+marker.score+"\n"+marker.tag, marker.filename, marker.tag]
-        ]);
+            google.maps.event.addListener(marker, 'mouseover', (function(marker) {
+                            return function(){
+                                            iw.setContent("<p>"+marker.recordDate+"<br>"+marker.score+"<br>"+marker.tag+"</p>");
+                                            iw.open(map, marker);
+                            };
+            })(marker));
+            google.maps.event.addListener(marker, 'mouseout', function(){
+                            iw.close();
+            });
+            oms.addMarker(marker);
+
+            // A row in the dataTable for each event
+            dataTable.addRows([
+                [new Date(marker.recordDate), marker.score, i.toString(), marker.recordDate+"\n"+marker.score+"\n"+marker.tag, marker.filename, marker.tag]
+            ]);
+        }
     }
     var view = new google.visualization.DataView(dataTable);
     view.setColumns([0,1,2,3]);
