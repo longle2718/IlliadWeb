@@ -145,10 +145,7 @@ var IllQueryPost = function (db, user, pwd, col, q, cb_done, cb_fail){
     });
 };
 
-var displayEvent = function(events){
-		if (events.length == 0)
-			return;
-		
+var displayEvent = function(events){	
     var markers = oms.getMarkers();
     for (var i = 0; i <markers.length;i++){
         markers[i].setMap(null);
@@ -156,6 +153,8 @@ var displayEvent = function(events){
     oms.clearMarkers();
     dataTable.removeRows(0, dataTable.getNumberOfRows());
     
+    if (events.length == 0)
+        return;
     
     var maxScore = math.max(events.map(function(o){return o.score;}));
     var minScore = math.min(events.map(function(o){return o.score;}));
